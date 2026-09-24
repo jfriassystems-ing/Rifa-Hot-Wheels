@@ -296,32 +296,33 @@ const App = {
 
   // ==================== DATOS BANCARIOS ====================
   renderizarDatosBancarios() {
-    if (!this.el.datosBancarios) return;
-    this.el.datosBancarios.innerHTML = CONFIG.cuentasBancarias.map(c => `
-      <div class="bg-hw-dark border border-hw-border rounded-xl p-4">
-        <div class="flex items-center justify-between mb-2">
-          <span class="font-bold text-hw-yellow text-sm">${Utils.escapeHTML(c.banco)}</span>
-          <span class="text-xs ${c.colorBadge} text-white px-2 py-0.5 rounded-full">${Utils.escapeHTML(c.etiquetaCorta)}</span>
-        </div>
-        <p class="text-xs text-gray-300">Titular: <span class="text-white">${Utils.escapeHTML(c.titular)}</span></p>
-        <p class="text-xs text-gray-300">${Utils.escapeHTML(c.tipo)}: <span class="text-white font-mono">${Utils.escapeHTML(c.numero)}</span></p>
-        <button type="button" data-copy="${Utils.escapeHTML(c.numeroCopiar)}" class="copiar-btn mt-2 text-xs bg-hw-yellow text-hw-dark font-bold px-3 py-1 rounded-full hover:bg-yellow-400 transition">
-          📋 Copiar
-        </button>
+  if (!this.el.datosBancarios) return;
+  this.el.datosBancarios.innerHTML = CONFIG.cuentasBancarias.map(c => `
+    <div class="bg-hw-dark border border-hw-border rounded-xl p-4">
+      <div class="flex items-center justify-between mb-2">
+        <span class="font-bold text-hw-yellow text-sm">${Utils.escapeHTML(c.banco)}</span>
+        <span class="text-xs ${c.colorBadge} text-white px-2 py-0.5 rounded-full">${Utils.escapeHTML(c.etiquetaCorta)}</span>
       </div>
-    `).join('');
+      <p class="text-xs text-gray-300">Titular: <span class="text-white">${Utils.escapeHTML(c.titular)}</span></p>
+      ${c.cedula ? `<p class="text-xs text-gray-300">Cédula: <span class="text-white font-mono">${Utils.escapeHTML(c.cedula)}</span></p>` : ''}
+      <p class="text-xs text-gray-300">${Utils.escapeHTML(c.tipo)}: <span class="text-white font-mono">${Utils.escapeHTML(c.numero)}</span></p>
+      <button type="button" data-copy="${Utils.escapeHTML(c.numeroCopiar)}" class="copiar-btn mt-2 text-xs bg-hw-yellow text-hw-dark font-bold px-3 py-1 rounded-full hover:bg-yellow-400 transition">
+        📋 Copiar cuenta
+      </button>
+    </div>
+  `).join('');
 
-    this.el.datosBancarios.querySelectorAll('.copiar-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const ok = await Utils.copiarAlPortapapeles(btn.dataset.copy);
-        if (ok) {
-          const orig = btn.textContent;
-          btn.textContent = '✅ ¡Copiado!';
-          setTimeout(() => btn.textContent = orig, 2000);
-        }
-      });
+  this.el.datosBancarios.querySelectorAll('.copiar-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const ok = await Utils.copiarAlPortapapeles(btn.dataset.copy);
+      if (ok) {
+        const orig = btn.textContent;
+        btn.textContent = '✅ ¡Copiado!';
+        setTimeout(() => btn.textContent = orig, 2000);
+      }
     });
-  },
+  });
+},
 
   // ==================== EVENTOS ====================
   attachEventos() {

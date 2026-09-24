@@ -34,27 +34,40 @@ const CONFIG = {
   },
 
   cuentasBancarias: [
-    {
-      id: 'popular',
-      banco: 'Banco Popular Dominicano',
-      etiquetaCorta: 'Popular',
-      colorBadge: 'bg-hw-red',
-      titular: 'Juan Pérez',
-      tipo: 'Cuenta de Ahorro',
-      numero: '123-456789-0',
-      numeroCopiar: '1234567890'
-    },
-    {
-      id: 'bhd',
-      banco: 'Banco BHD',
-      etiquetaCorta: 'BHD',
-      colorBadge: 'bg-blue-600',
-      titular: 'Juan Pérez',
-      tipo: 'Cuenta de Ahorro',
-      numero: '987-654321-0',
-      numeroCopiar: '9876543210'
-    }
-  ],
+  {
+    id: 'popular',
+    banco: 'Banco Popular',
+    etiquetaCorta: 'Popular',
+    colorBadge: 'bg-hw-red',
+    titular: 'Julio Bautista Frias Guzman',
+    cedula: '402-4288485-2',
+    tipo: 'Cuenta de Ahorro',
+    numero: '822-622981-6',
+    numeroCopiar: '822622981'
+  },
+  {
+    id: 'banreservas',
+    banco: 'Banreservas',
+    etiquetaCorta: 'Banreservas',
+    colorBadge: 'bg-green-600',
+    titular: 'Julio Bautista Frias Guzman',
+    cedula: '402-4288485-2',
+    tipo: 'Cuenta de Ahorro',
+    numero: '960-894457-5',
+    numeroCopiar: '9608944575'
+  },
+  {
+    id: 'bhd',
+    banco: 'Banco BHD',
+    etiquetaCorta: 'BHD',
+    colorBadge: 'bg-blue-600',
+    titular: 'Julio Bautista Frias Guzman',
+    cedula: '402-4288485-2',
+    tipo: 'Cuenta Corriente',
+    numero: '392-950200-13',
+    numeroCopiar: '39295020013'
+  }
+],
 
   estadosPedido: {
     PENDIENTE: 'pendiente',
