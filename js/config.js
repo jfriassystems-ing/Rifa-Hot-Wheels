@@ -29,8 +29,8 @@ const CONFIG = {
   },
 
   contacto: {
-    whatsapp: '18091234567',
-    whatsappMostrar: '809-123-4567'
+    whatsapp: '(809) 505-9852',
+    whatsappMostrar: '(809) 505-9852'
   },
 
   cuentasBancarias: [
