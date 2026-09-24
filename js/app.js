@@ -1,6 +1,6 @@
 /**
  * LÓGICA DE LA LANDING PÚBLICA
- * Galería por secciones de marca + Checkout
+ * Galería por secciones de marca + Checkout + Modal de bienvenida
  */
 
 const App = {
@@ -19,16 +19,16 @@ const App = {
 
   el: {},
 
-async init() {
-  this.cachearElementos();
-  await this.renderizarGaleria();
-  await this.recargarNumeros();
-  this.renderizarDatosBancarios();
-  this.attachEventos();
-  this.actualizarContador();
-  this.mostrarBienvenida();
-  console.log('✅ App lista');
-},
+  async init() {
+    this.cachearElementos();
+    await this.renderizarGaleria();
+    await this.recargarNumeros();
+    this.renderizarDatosBancarios();
+    this.attachEventos();
+    this.actualizarContador();
+    this.mostrarBienvenida();
+    console.log('✅ App lista');
+  },
 
   cachearElementos() {
     this.el = {
@@ -83,7 +83,6 @@ async init() {
 
     if (vacio) vacio.classList.add('hidden');
 
-    // Filtros por marca
     const marcas = [...new Set(carritos.map(c => c.marca))].sort();
     if (filtros) {
       filtros.innerHTML = `
@@ -125,7 +124,6 @@ async init() {
     const contenedor = document.getElementById('galeria-secciones');
     if (!contenedor) return;
 
-    // Agrupar por marca
     const porMarca = {};
     carritos.forEach(c => {
       if (!porMarca[c.marca]) porMarca[c.marca] = [];
@@ -147,7 +145,6 @@ async init() {
 
     contenedor.innerHTML = html;
 
-    // Attach clicks para abrir modal
     contenedor.querySelectorAll('[data-carrito-id]').forEach(card => {
       card.addEventListener('click', () => this.abrirModalCarrito(card.dataset.carritoId));
     });
@@ -216,7 +213,6 @@ async init() {
     const btnCerrar = overlay.querySelector('.cerrar');
     if (btnCerrar) btnCerrar.addEventListener('click', () => overlay.remove());
 
-    // Cambiar foto al hacer clic en thumbnail
     const imgPrincipal = overlay.querySelector('#foto-principal');
     overlay.querySelectorAll('.foto-thumb').forEach(thumb => {
       thumb.addEventListener('click', () => {
@@ -456,20 +452,20 @@ async init() {
       const mensaje = [
         CONFIG.textos.mensajeWhatsappPedido,
         ``,
-        ` *Nombre:* ${pedido.nombre}`,
-        ` *Teléfono:* ${Utils.formatearTelefono(pedido.telefono)}`,
+        `👤 *Nombre:* ${pedido.nombre}`,
+        `📱 *Teléfono:* ${Utils.formatearTelefono(pedido.telefono)}`,
         ``,
-        ` *Números:*`,
+        `🎯 *Números:*`,
         pedido.numeros.map(n => `   • #${n}`).join('\n'),
         ``,
-        ` *Cantidad:* ${pedido.numeros.length}`,
-        ` *Total:* ${Utils.formatoMoneda(pedido.total)}`,
+        `🔢 *Cantidad:* ${pedido.numeros.length}`,
+        `💰 *Total:* ${Utils.formatoMoneda(pedido.total)}`,
         ``,
-        ` *Código:* ${pedido.id}`,
+        `🆔 *Código:* ${pedido.id}`,
         ``,
-        ` *Comprobante:* ${pedido.comprobante}`,
+        `📸 *Comprobante:* ${pedido.comprobante}`,
         ``,
-        ` ¡Gracias! Recuerda: el sorteo se realiza al venderse los 100 números.`
+        `✅ ¡Gracias! Recuerda: el sorteo se realiza al venderse los 100 números.`
       ].join('\n');
 
       window.open(`https://wa.me/${CONFIG.contacto.whatsapp}?text=${encodeURIComponent(mensaje)}`, '_blank');
@@ -492,7 +488,8 @@ async init() {
       this.el.btnWhatsapp.disabled = false;
       this.el.btnWhatsapp.innerHTML = textoOrig;
     }
-  }
+  },
+
   // ==================== MODAL DE BIENVENIDA ====================
   mostrarBienvenida() {
     const KEY = 'hw_bienvenida_vista';
@@ -549,33 +546,7 @@ async init() {
     modal.classList.remove('flex');
     document.body.classList.remove('modal-abierto');
     localStorage.setItem('hw_bienvenida_vista', Date.now().toString());
-  },
-
+  }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 document.addEventListener('DOMContentLoaded', () => App.init());
