@@ -245,6 +245,52 @@
     </div>
   </div>
 
+<!-- ==================== MODAL DE BIENVENIDA ==================== -->
+<div id="modal-bienvenida" class="fixed inset-0 z-[80] hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+  <div class="bg-hw-card border-2 border-hw-yellow rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slide-up">
+    <div class="relative bg-gradient-to-br from-hw-red to-red-900 px-6 py-6 text-center">
+      <div class="text-5xl mb-2">🏎️</div>
+      <h3 class="font-display text-3xl sm:text-4xl text-white tracking-wide leading-tight">¡BIENVENIDO A LA RIFA!</h3>
+      <p class="text-hw-yellow text-sm mt-2 font-bold">Hot Wheels · República Dominicana</p>
+    </div>
+    <div class="p-6 sm:p-8">
+      <div class="space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+        <p>Estoy rifando mi colección de <strong class="text-hw-yellow">Hot Wheels</strong> porque ya no la puedo tener conmigo. 😔</p>
+        <p>La tenía en venta, pero sería muy difícil venderla toda por separado, así que decidí rifarla completa para que alguien la disfrute como se merece.</p>
+        <div class="bg-hw-dark border border-hw-border rounded-xl p-4 my-4">
+          <p class="text-center text-white">💰 Por solo <strong class="text-hw-yellow text-xl">$500 pesos</strong> por número</p>
+          <p class="text-center text-gray-400 text-xs mt-2">puedes ganar la colección completa</p>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center my-4">
+          <div class="bg-hw-dark rounded-xl p-3 border border-hw-border">
+            <p class="font-display text-2xl text-hw-yellow">+85</p>
+            <p class="text-xs text-gray-500 mt-1">Piezas</p>
+          </div>
+          <div class="bg-hw-dark rounded-xl p-3 border border-hw-border">
+            <p class="font-display text-2xl text-hw-red">100</p>
+            <p class="text-xs text-gray-500 mt-1">Números</p>
+          </div>
+          <div class="bg-hw-dark rounded-xl p-3 border border-hw-border">
+            <p class="font-display text-2xl text-hw-yellow">$500</p>
+            <p class="text-xs text-gray-500 mt-1">Por número</p>
+          </div>
+        </div>
+        <p>Incluye <strong class="text-white">modelos difíciles de encontrar</strong> que ya no se consiguen fácilmente. ¡Una colección interesante para cualquier fanático!</p>
+        <div class="bg-hw-yellow/10 border-2 border-hw-yellow rounded-xl p-4 my-4">
+          <p class="text-center text-hw-yellow font-bold text-sm flex items-center justify-center gap-2">🎲 El sorteo se realizará cuando se vendan los 100 números</p>
+        </div>
+      </div>
+      <div class="mt-6 space-y-3">
+        <a href="#numeros" id="btn-bienvenida-participar" class="block w-full bg-hw-red hover:bg-red-700 text-white font-bold text-center py-4 rounded-full transition shadow-neon-red animate-pulse-soft">🎯 ¡Quiero participar!</a>
+        <button id="btn-bienvenida-cerrar" class="block w-full bg-hw-dark border border-hw-border text-gray-400 hover:text-white hover:border-hw-yellow font-semibold text-center py-3 rounded-full transition text-sm">Ver la galería primero</button>
+      </div>
+      <p class="text-xs text-gray-500 text-center mt-4">Solo 100 números disponibles · Se venden rápido</p>
+    </div>
+  </div>
+</div>
+
+
+
   <!-- MODAL ÉXITO -->
   <div id="modal-exito" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
     <div class="bg-hw-card border-2 border-green-500 rounded-3xl max-w-md w-full p-6 sm:p-8 text-center">

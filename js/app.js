@@ -19,15 +19,16 @@ const App = {
 
   el: {},
 
-  async init() {
-    this.cachearElementos();
-    await this.renderizarGaleria();
-    await this.recargarNumeros();
-    this.renderizarDatosBancarios();
-    this.attachEventos();
-    this.actualizarContador();
-    console.log('✅ App lista');
-  },
+async init() {
+  this.cachearElementos();
+  await this.renderizarGaleria();
+  await this.recargarNumeros();
+  this.renderizarDatosBancarios();
+  this.attachEventos();
+  this.actualizarContador();
+  this.mostrarBienvenida();
+  console.log('✅ App lista');
+},
 
   cachearElementos() {
     this.el = {
@@ -492,6 +493,89 @@ const App = {
       this.el.btnWhatsapp.innerHTML = textoOrig;
     }
   }
+  // ==================== MODAL DE BIENVENIDA ====================
+  mostrarBienvenida() {
+    const KEY = 'hw_bienvenida_vista';
+    const ULTIMA_VEZ = localStorage.getItem(KEY);
+    const AHORA = Date.now();
+    const UN_DIA = 24 * 60 * 60 * 1000;
+
+    if (ULTIMA_VEZ && (AHORA - Number(ULTIMA_VEZ)) < UN_DIA) return;
+
+    const modal = document.getElementById('modal-bienvenida');
+    if (!modal) { console.warn('⚠️ Modal de bienvenida no encontrado'); return; }
+
+    setTimeout(() => {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.classList.add('modal-abierto');
+    }, 1000);
+
+    const btnParticipar = document.getElementById('btn-bienvenida-participar');
+    if (btnParticipar) {
+      btnParticipar.addEventListener('click', () => {
+        this.cerrarBienvenida();
+        setTimeout(() => {
+          document.getElementById('numeros')?.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+      });
+    }
+
+    const btnCerrar = document.getElementById('btn-bienvenida-cerrar');
+    if (btnCerrar) {
+      btnCerrar.addEventListener('click', () => {
+        this.cerrarBienvenida();
+        setTimeout(() => {
+          document.getElementById('galeria')?.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+      });
+    }
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) this.cerrarBienvenida();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        this.cerrarBienvenida();
+      }
+    });
+  },
+
+  cerrarBienvenida() {
+    const modal = document.getElementById('modal-bienvenida');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.classList.remove('modal-abierto');
+    localStorage.setItem('hw_bienvenida_vista', Date.now().toString());
+  },
+
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 document.addEventListener('DOMContentLoaded', () => App.init());
