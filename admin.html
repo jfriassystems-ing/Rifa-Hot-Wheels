@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>Admin | Rifa Hot Wheels</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { 'display': ['"Bebas Neue"', 'cursive'], 'body': ['Inter', 'sans-serif'] },
+          colors: {
+            'hw-red': '#E11D2E', 'hw-yellow': '#FFD400',
+            'hw-dark': '#0B0B0F', 'hw-card': '#15151C', 'hw-border': '#26262F',
+            'admin-bg': '#0a0a0f', 'admin-card': '#111118', 'admin-border': '#1f1f28', 'admin-accent': '#3b82f6',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-admin-bg text-white font-body min-h-screen">
+
+  <!-- LOGIN -->
+  <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-admin-bg">
+    <div class="bg-admin-card border border-admin-border rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+      <div class="text-center mb-8">
+        <div class="text-5xl mb-3">🔒</div>
+        <h1 class="font-display text-3xl text-hw-yellow tracking-wide">PANEL ADMIN</h1>
+        <p class="text-gray-400 text-sm mt-2">Rifa Hot Wheels</p>
+      </div>
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="login-email" class="block text-sm font-semibold text-gray-300 mb-1">Email</label>
+          <input type="email" id="login-email" required autocomplete="username" placeholder="tu@email.com"
+            class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition" />
+        </div>
+        <div>
+          <label for="login-password" class="block text-sm font-semibold text-gray-300 mb-1">Contraseña</label>
+          <input type="password" id="login-password" required autocomplete="current-password" placeholder="••••••••"
+            class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition" />
+        </div>
+        <p id="login-error" class="text-hw-red text-sm hidden"></p>
+        <button type="submit" class="w-full bg-hw-yellow text-hw-dark font-bold px-6 py-3 rounded-xl hover:bg-yellow-400 transition">
+          Iniciar sesión
+        </button>
+      </form>
+      <p class="text-xs text-gray-600 text-center mt-6">
+        <a href="index.html" class="hover:text-hw-yellow transition">← Volver al sitio público</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="admin-app" class="hidden min-h-screen flex flex-col">
+
+    <header class="sticky top-0 z-40 bg-admin-card border-b border-admin-border safe-top">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <button id="btn-menu-mobile" class="md:hidden text-gray-300 hover:text-hw-yellow text-2xl">☰</button>
+          <a href="index.html" class="flex items-center gap-2">
+            <span class="text-2xl">🏎️</span>
+            <span class="font-display text-xl tracking-wider text-hw-yellow hidden sm:inline">ADMIN</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-4">
+          <span class="text-xs text-gray-400 hidden sm:inline">Sesión activa</span>
+          <button id="btn-logout" class="text-xs sm:text-sm bg-hw-red hover:bg-red-700 text-white font-bold px-3 sm:px-4 py-2 rounded-full transition">
+            Salir
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex-1 flex max-w-7xl mx-auto w-full">
+      <aside id="sidebar" class="fixed md:sticky top-16 left-0 z-30 w-64 h-[calc(100vh-4rem)] bg-admin-card border-r border-admin-border transform -translate-x-full md:translate-x-0 transition-transform duration-200 overflow-y-auto">
+        <nav class="p-4 space-y-1">
+          <button data-seccion="dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-semibold transition">
+            <span class="text-xl">📊</span><span>Dashboard</span>
+          </button>
+          <button data-seccion="pedidos" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-semibold transition">
+            <span class="text-xl">📦</span><span>Pedidos</span>
+          </button>
+          <button data-seccion="numeros" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-semibold transition">
+            <span class="text-xl">🎯</span><span>Números</span>
+          </button>
+          <button data-seccion="carritos" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-semibold transition">
+            <span class="text-xl">🖼️</span><span>Carritos</span>
+          </button>
+          <button data-seccion="categorias" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-semibold transition">
+            <span class="text-xl">🏷️</span><span>Categorías</span>
+          </button>
+        </nav>
+      </aside>
+
+      <div id="sidebar-overlay" class="fixed inset-0 z-20 bg-black/60 hidden md:hidden"></div>
+
+      <main class="flex-1 p-4 sm:p-6 lg:p-8 min-w-0">
+
+        <!-- DASHBOARD -->
+        <section id="seccion-dashboard" class="seccion">
+          <h2 class="font-display text-3xl sm:text-4xl text-hw-yellow tracking-wide mb-6">DASHBOARD</h2>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+            <div class="bg-admin-card border border-admin-border rounded-2xl p-4">
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Pedidos</p>
+              <p class="font-display text-3xl sm:text-4xl text-white" id="stat-pedidos">0</p>
+            </div>
+            <div class="bg-admin-card border border-admin-border rounded-2xl p-4">
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Confirmados</p>
+              <p class="font-display text-3xl sm:text-4xl text-green-400" id="stat-confirmados">0</p>
+            </div>
+            <div class="bg-admin-card border border-admin-border rounded-2xl p-4">
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Pendientes</p>
+              <p class="font-display text-3xl sm:text-4xl text-yellow-400" id="stat-pendientes">0</p>
+            </div>
+            <div class="bg-admin-card border border-admin-border rounded-2xl p-4">
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Rechazados</p>
+              <p class="font-display text-3xl sm:text-4xl text-red-400" id="stat-rechazados">0</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
+            <div class="bg-admin-card border border-admin-border rounded-2xl p-5">
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Números vendidos</p>
+              <p class="font-display text-4xl text-hw-yellow" id="stat-numeros-vendidos">0 / 100</p>
+              <div class="mt-3 h-2 bg-admin-bg rounded-full overflow-hidden">
+                <div id="barra-progreso" class="h-full bg-gradient-to-r from-hw-red to-hw-yellow transition-all duration-500" style="width: 0%"></div>
+              </div>
+              <p class="text-xs text-gray-500 mt-2" id="stat-porcentaje">0% vendido</p>
+            </div>
+            <div class="bg-admin-card border border-admin-border rounded-2xl p-5">
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Recaudado</p>
+              <p class="font-display text-3xl sm:text-4xl text-green-400" id="stat-recaudado">$0</p>
+              <p class="text-xs text-gray-500 mt-2">Solo confirmados</p>
+            </div>
+            <div class="bg-admin-card border border-admin-border rounded-2xl p-5">
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Por cobrar</p>
+              <p class="font-display text-3xl sm:text-4xl text-yellow-400" id="stat-potencial">$0</p>
+              <p class="text-xs text-gray-500 mt-2">Pendientes</p>
+            </div>
+          </div>
+          <div class="bg-admin-card border border-admin-border rounded-2xl p-5">
+            <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+              <p class="text-sm text-gray-400 uppercase tracking-wide">Últimos pedidos</p>
+              <button onclick="Admin.irASeccion('pedidos')" class="text-xs text-admin-accent hover:text-hw-yellow transition">Ver todos →</button>
+            </div>
+            <div id="ultimos-pedidos" class="space-y-2"></div>
+          </div>
+        </section>
+
+        <!-- PEDIDOS -->
+        <section id="seccion-pedidos" class="seccion hidden">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <h2 class="font-display text-3xl sm:text-4xl text-hw-yellow tracking-wide">PEDIDOS</h2>
+            <button id="btn-exportar-csv" class="bg-admin-accent hover:bg-blue-700 text-white text-sm font-bold px-4 py-2 rounded-full transition">
+              📥 Exportar CSV
+            </button>
+          </div>
+          <div class="bg-admin-card border border-admin-border rounded-2xl p-4 mb-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <input type="text" id="busqueda-pedidos" placeholder="Nombre, teléfono o código..."
+                class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition text-sm" />
+              <select id="filtro-estado" class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-hw-yellow transition text-sm">
+                <option value="todos">Todos los estados</option>
+                <option value="pendiente">⏳ Pendiente</option>
+                <option value="confirmado">✅ Confirmado</option>
+                <option value="rechazado">❌ Rechazado</option>
+              </select>
+              <input type="text" id="filtro-numero" placeholder="Buscar por número (#12)"
+                class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition text-sm" />
+              <button id="btn-limpiar-filtros" class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-2.5 text-gray-300 hover:border-hw-yellow transition text-sm">
+                🧹 Limpiar
+              </button>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mb-3" id="contador-pedidos">0 pedidos</p>
+          <div id="lista-pedidos" class="space-y-3"></div>
+        </section>
+
+        <!-- NÚMEROS -->
+        <section id="seccion-numeros" class="seccion hidden">
+          <h2 class="font-display text-3xl sm:text-4xl text-hw-yellow tracking-wide mb-6">MAPA DE NÚMEROS</h2>
+          <div class="bg-admin-card border border-admin-border rounded-2xl p-4 mb-4">
+            <div class="flex flex-wrap gap-4 text-sm">
+              <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-green-600"></span><span class="text-gray-300">Disponible</span></div>
+              <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-yellow-500"></span><span class="text-gray-300">Pendiente</span></div>
+              <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-hw-red"></span><span class="text-gray-300">Vendido</span></div>
+            </div>
+          </div>
+          <div id="grid-numeros-admin" class="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-12 lg:grid-cols-15 gap-2"></div>
+        </section>
+
+        <!-- CARRITOS -->
+        <section id="seccion-carritos" class="seccion hidden">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <h2 class="font-display text-3xl sm:text-4xl text-hw-yellow tracking-wide">CARRITOS</h2>
+            <button id="btn-nuevo-carrito" class="bg-hw-yellow text-hw-dark text-sm font-bold px-4 py-2 rounded-full hover:bg-yellow-400 transition">
+              ➕ Nuevo carrito
+            </button>
+          </div>
+          <div class="bg-admin-card border border-admin-border rounded-2xl p-4 mb-4">
+            <p class="text-xs text-gray-400">
+              💡 Cada carrito puede tener hasta <strong class="text-hw-yellow">3 fotos</strong>. Marca el ⭐ <strong class="text-hw-yellow">"Destacado"</strong> para que aparezca en la galería pública.
+            </p>
+          </div>
+          <div id="lista-carritos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"></div>
+        </section>
+
+        <!-- CATEGORÍAS -->
+        <section id="seccion-categorias" class="seccion hidden">
+          <h2 class="font-display text-3xl sm:text-4xl text-hw-yellow tracking-wide mb-6">CATEGORÍAS / MARCAS</h2>
+          <div class="bg-admin-card border border-admin-border rounded-2xl p-4 mb-6">
+            <form id="form-nueva-categoria" class="flex flex-col sm:flex-row gap-3">
+              <input type="text" id="input-nueva-categoria" required placeholder="Ej: Lamborghini, Honda..."
+                class="flex-1 bg-admin-bg border border-admin-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition" />
+              <button type="submit" class="bg-hw-yellow text-hw-dark font-bold px-6 py-3 rounded-xl hover:bg-yellow-400 transition whitespace-nowrap">
+                ➕ Agregar
+              </button>
+            </form>
+            <p id="error-nueva-categoria" class="text-hw-red text-sm mt-2 hidden"></p>
+          </div>
+          <div id="lista-categorias" class="space-y-2"></div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL PEDIDO -->
+  <div id="modal-pedido" class="fixed inset-0 z-50 hidden items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-admin-card border border-admin-border sm:rounded-3xl w-full h-full sm:h-auto sm:max-w-2xl sm:max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div class="sticky top-0 bg-admin-card border-b border-admin-border px-4 sm:px-6 py-4 flex items-center justify-between z-10 safe-top">
+        <h3 class="font-display text-xl sm:text-2xl text-hw-yellow tracking-wide">DETALLE DEL PEDIDO</h3>
+        <button id="cerrar-modal-pedido" class="text-gray-400 hover:text-hw-red text-3xl leading-none">&times;</button>
+      </div>
+      <div id="contenido-pedido" class="p-4 sm:p-6"></div>
+    </div>
+  </div>
+
+  <!-- MODAL CARRITO -->
+  <div id="modal-carrito" class="fixed inset-0 z-50 hidden items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-admin-card border border-admin-border sm:rounded-3xl w-full h-full sm:h-auto sm:max-w-2xl sm:max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div class="sticky top-0 bg-admin-card border-b border-admin-border px-4 sm:px-6 py-4 flex items-center justify-between z-10 safe-top">
+        <h3 id="titulo-modal-carrito" class="font-display text-xl sm:text-2xl text-hw-yellow tracking-wide">NUEVO CARRITO</h3>
+        <button id="cerrar-modal-carrito" class="text-gray-400 hover:text-hw-red text-3xl leading-none">&times;</button>
+      </div>
+
+      <div class="p-4 sm:p-6">
+        <form id="form-carrito" class="space-y-4">
+
+          <div>
+            <label for="input-carrito-marca" class="block text-sm font-semibold text-gray-300 mb-1">Marca / Categoría *</label>
+            <select id="input-carrito-marca" required
+              class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-hw-yellow transition">
+            </select>
+          </div>
+
+          <div>
+            <label for="input-carrito-nombre" class="block text-sm font-semibold text-gray-300 mb-1">Nombre del modelo *</label>
+            <input type="text" id="input-carrito-nombre" required placeholder="Ej: Ferrari F40 rojo"
+              class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition" />
+          </div>
+
+          <div>
+            <label for="input-carrito-descripcion" class="block text-sm font-semibold text-gray-300 mb-1">Descripción (opcional)</label>
+            <textarea id="input-carrito-descripcion" rows="2" placeholder="Detalles adicionales..."
+              class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition"></textarea>
+          </div>
+
+          <!-- FOTOS -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-2">
+              Fotos (máximo 3) <span id="contador-fotos-modal" class="text-hw-yellow">0/3</span>
+            </label>
+            <div id="fotos-grid" class="grid grid-cols-3 gap-3"></div>
+            <p class="text-xs text-gray-500 mt-2">La primera foto será la principal. Se subirán a Cloudinary al guardar.</p>
+          </div>
+
+          <label class="flex items-center gap-3 bg-admin-bg border border-admin-border rounded-xl px-4 py-3 cursor-pointer hover:border-hw-yellow transition">
+            <input type="checkbox" id="input-carrito-destacado" class="w-5 h-5 rounded accent-hw-yellow" />
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-white">⭐ Destacar en la galería pública</p>
+              <p class="text-xs text-gray-500">Solo los destacados aparecen en la landing</p>
+            </div>
+          </label>
+
+          <p id="error-modal-carrito" class="text-hw-red text-sm hidden"></p>
+
+          <div class="flex gap-3 pt-2">
+            <button type="button" id="cancelar-modal-carrito" class="flex-1 bg-admin-bg border border-admin-border text-gray-300 font-bold px-4 py-3 rounded-xl hover:border-gray-600 transition">
+              Cancelar
+            </button>
+            <button type="submit" id="btn-guardar-carrito" class="flex-1 bg-hw-yellow text-hw-dark font-bold px-4 py-3 rounded-xl hover:bg-yellow-400 transition">
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRM -->
+  <div id="modal-confirm" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-admin-card border border-admin-border rounded-3xl max-w-md w-full p-6 shadow-2xl">
+      <h3 id="confirm-titulo" class="font-display text-2xl text-hw-yellow mb-3">CONFIRMAR</h3>
+      <p id="confirm-mensaje" class="text-gray-300 mb-6 text-sm">¿Estás seguro?</p>
+      <div class="flex gap-3">
+        <button id="confirm-cancelar" class="flex-1 bg-admin-bg border border-admin-border text-gray-300 font-bold px-4 py-3 rounded-xl hover:border-gray-600 transition">Cancelar</button>
+        <button id="confirm-aceptar" class="flex-1 bg-hw-red text-white font-bold px-4 py-3 rounded-xl hover:bg-red-700 transition">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-4 right-4 z-[70] space-y-2 pointer-events-none"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

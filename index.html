@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0B0B0F" />
+  <title>Rifa Hot Wheels | 85+ Carritos en Juego</title>
+  <meta name="description" content="Rifa de más de 85 carritos Hot Wheels en República Dominicana. 100 números a 500 DOP." />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { 'display': ['"Bebas Neue"', 'cursive'], 'body': ['Inter', 'sans-serif'] },
+          colors: {
+            'hw-red': '#E11D2E', 'hw-yellow': '#FFD400',
+            'hw-dark': '#0B0B0F', 'hw-card': '#15151C', 'hw-border': '#26262F',
+          },
+          boxShadow: { 'neon-red': '0 0 20px rgba(225, 29, 46, 0.5)', 'neon-yellow': '0 0 20px rgba(255, 212, 0, 0.5)' }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-hw-dark text-white font-body bg-grid min-h-screen">
+
+  <header class="sticky top-0 z-40 bg-hw-dark/90 backdrop-blur-md border-b border-hw-border safe-top">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <a href="#inicio" class="flex items-center gap-2">
+        <span class="text-2xl sm:text-3xl">🏎️</span>
+        <span class="font-display text-xl sm:text-2xl lg:text-3xl tracking-wider text-hw-yellow">RIFA HOT WHEELS</span>
+      </a>
+      <ul class="hidden md:flex items-center gap-8 font-semibold text-sm uppercase tracking-wide">
+        <li><a href="#inicio" class="hover:text-hw-yellow transition">Inicio</a></li>
+        <li><a href="#galeria" class="hover:text-hw-yellow transition">Galería</a></li>
+        <li><a href="#numeros" class="hover:text-hw-yellow transition">Números</a></li>
+        <li><a href="#consultar" class="hover:text-hw-yellow transition">Consultar</a></li>
+      </ul>
+      <a href="#numeros" class="bg-hw-red hover:bg-red-700 text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full transition shadow-neon-red">
+        Elegir Números
+      </a>
+    </nav>
+  </header>
+
+  <section id="inicio" class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-hw-red/20 via-transparent to-transparent pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-24 lg:pb-28 relative">
+      <div class="text-center max-w-3xl mx-auto">
+        <span class="inline-block bg-hw-yellow text-hw-dark font-bold text-xs sm:text-sm px-3 sm:px-4 py-1 rounded-full mb-6 uppercase tracking-widest">
+          🔥 Rifa Activa en República Dominicana
+        </span>
+        <h1 class="font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl leading-none tracking-wide mb-6">
+          GANA UN LOTE DE <span class="text-hw-red">+85 CARRITOS</span> <span class="text-hw-yellow">HOT WHEELS</span>
+        </h1>
+        <p class="text-base sm:text-lg lg:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+          Solo <strong class="text-hw-yellow">100 números</strong> a <strong class="text-hw-yellow">$500 DOP</strong> cada uno.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12">
+          <a href="#numeros" class="bg-hw-red hover:bg-red-700 text-white font-bold text-base sm:text-lg px-6 sm:px-8 py-4 rounded-full transition shadow-neon-red animate-pulse-soft">
+            🎯 ¡Elige tus números ya!
+          </a>
+          <a href="#galeria" class="border-2 border-hw-yellow text-hw-yellow hover:bg-hw-yellow hover:text-hw-dark font-bold text-base sm:text-lg px-6 sm:px-8 py-4 rounded-full transition">
+            Ver Galería
+          </a>
+        </div>
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 max-w-3xl mx-auto">
+          <div class="bg-hw-card border border-hw-border rounded-2xl p-3 sm:p-5">
+            <p class="text-3xl sm:text-4xl font-display text-hw-yellow" id="stat-total">100</p>
+            <p class="text-xs sm:text-sm text-gray-400 uppercase tracking-wide mt-1">Números</p>
+          </div>
+          <div class="bg-hw-card border border-hw-border rounded-2xl p-3 sm:p-5">
+            <p class="text-3xl sm:text-4xl font-display text-hw-red" id="stat-precio">$500</p>
+            <p class="text-xs sm:text-sm text-gray-400 uppercase tracking-wide mt-1">DOP c/u</p>
+          </div>
+          <div class="bg-hw-card border border-hw-border rounded-2xl p-3 sm:p-5">
+            <p class="text-3xl sm:text-4xl font-display text-hw-yellow" id="stat-disponibles">100</p>
+            <p class="text-xs sm:text-sm text-gray-400 uppercase tracking-wide mt-1">Disponibles</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALERÍA POR MARCAS -->
+  <section id="galeria" class="py-16 lg:py-24 bg-hw-dark/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8 sm:mb-10">
+        <h2 class="font-display text-3xl sm:text-5xl lg:text-6xl text-hw-yellow tracking-wide mb-4">MIRA LO QUE PUEDES GANAR</h2>
+        <p class="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">Más de 85 carritos Hot Wheels destapados, en excelente estado.</p>
+      </div>
+
+      <div id="galeria-filtros" class="flex flex-wrap justify-center gap-2 mb-8"></div>
+
+      <div id="galeria-secciones"></div>
+
+      <div id="galeria-vacia" class="hidden text-center py-16">
+        <div class="text-6xl mb-4">📸</div>
+        <p class="text-gray-400">Aún no hay carritos publicados. Vuelve pronto.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- NÚMEROS -->
+  <section id="numeros" class="py-16 lg:py-24">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8 sm:mb-10">
+        <h2 class="font-display text-3xl sm:text-5xl lg:text-6xl text-hw-yellow tracking-wide mb-4">ELIGE TUS NÚMEROS</h2>
+        <p class="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">Verde = disponible. Gris = vendido. Amarillo = seleccionado.</p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-3 sm:gap-6 mb-6 sm:mb-8 text-xs sm:text-sm">
+        <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-green-600"></span><span class="text-gray-300">Disponible</span></div>
+        <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-hw-yellow"></span><span class="text-gray-300">Seleccionado</span></div>
+        <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-gray-700"></span><span class="text-gray-300">Vendido</span></div>
+      </div>
+
+      <div id="grid-numeros" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2 sm:gap-3 mb-8"></div>
+
+      <div class="sticky bottom-4 z-30 bg-hw-card/95 backdrop-blur-md border-2 border-hw-yellow rounded-2xl p-3 sm:p-6 shadow-2xl safe-bottom">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+          <div class="flex items-center justify-between w-full sm:w-auto gap-6 sm:gap-8">
+            <div class="text-center sm:text-left">
+              <p class="text-xs text-gray-400 uppercase tracking-wide">Seleccionados</p>
+              <p class="font-display text-3xl sm:text-4xl text-hw-yellow" id="contador-numeros">0</p>
+            </div>
+            <div class="text-center sm:text-left">
+              <p class="text-xs text-gray-400 uppercase tracking-wide">Total</p>
+              <p class="font-display text-2xl sm:text-4xl text-hw-red" id="contador-total">$0</p>
+            </div>
+          </div>
+          <button id="btn-checkout" disabled
+            class="w-full sm:w-auto bg-hw-red hover:bg-red-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full transition shadow-neon-red">
+            Continuar al Pago →
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONSULTAR -->
+  <section id="consultar" class="py-16 lg:py-24 bg-hw-dark/80">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8 sm:mb-10">
+        <h2 class="font-display text-3xl sm:text-5xl lg:text-6xl text-hw-yellow tracking-wide mb-4">CONSULTA TUS NÚMEROS</h2>
+        <p class="text-gray-400 text-sm sm:text-base">Ingresa tu código de pedido o tu teléfono.</p>
+      </div>
+      <div class="bg-hw-card border border-hw-border rounded-2xl p-4 sm:p-6">
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input type="text" id="input-consulta" placeholder="Ej: HW-A3F9K2 o 8091234567"
+            class="flex-1 bg-hw-dark border border-hw-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition" />
+          <button id="btn-consultar" class="bg-hw-yellow text-hw-dark font-bold px-6 py-3 rounded-xl hover:bg-yellow-400 transition">
+            🔍 Consultar
+          </button>
+        </div>
+        <div id="resultado-consulta" class="hidden mt-4"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CHECKOUT -->
+  <div id="modal-checkout" class="fixed inset-0 z-50 hidden items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-hw-card border border-hw-border sm:rounded-3xl w-full h-full sm:h-auto sm:max-w-lg sm:max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div class="sticky top-0 bg-hw-card border-b border-hw-border px-4 sm:px-6 py-4 flex items-center justify-between sm:rounded-t-3xl z-10 safe-top">
+        <h3 class="font-display text-xl sm:text-2xl text-hw-yellow tracking-wide">FINALIZAR PEDIDO</h3>
+        <button id="cerrar-modal" class="text-gray-400 hover:text-hw-red text-3xl leading-none">&times;</button>
+      </div>
+
+      <div class="p-4 sm:p-6">
+        <div class="bg-hw-dark rounded-2xl p-4 mb-6 border border-hw-border">
+          <p class="text-xs sm:text-sm text-gray-400 uppercase tracking-wide mb-2">Resumen</p>
+          <div id="resumen-numeros" class="flex flex-wrap gap-2 mb-3"></div>
+          <div class="flex justify-between items-center pt-3 border-t border-hw-border">
+            <span class="text-gray-400">Total:</span>
+            <span class="font-display text-2xl sm:text-3xl text-hw-red" id="resumen-total">$0 DOP</span>
+          </div>
+        </div>
+
+        <form id="form-pedido" class="space-y-4 mb-6">
+          <div>
+            <label for="nombre" class="block text-sm font-semibold text-gray-300 mb-1">Nombre completo *</label>
+            <input type="text" id="nombre" required placeholder="Ej: Juan Pérez" autocomplete="name"
+              class="w-full bg-hw-dark border border-hw-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition" />
+          </div>
+          <div>
+            <label for="telefono" class="block text-sm font-semibold text-gray-300 mb-1">Teléfono / WhatsApp *</label>
+            <input type="tel" id="telefono" required placeholder="Ej: 809-123-4567" autocomplete="tel" inputmode="tel"
+              class="w-full bg-hw-dark border border-hw-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition" />
+          </div>
+        </form>
+
+        <div class="mb-6">
+          <p class="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wide">💳 Datos de transferencia</p>
+          <div id="datos-bancarios" class="space-y-3"></div>
+        </div>
+
+        <div class="mb-6">
+          <p class="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wide">📸 Sube tu comprobante *</p>
+          <label for="comprobante" id="dropzone"
+            class="dropzone flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-hw-border rounded-2xl cursor-pointer bg-hw-dark hover:border-hw-yellow transition">
+            <div id="dropzone-empty" class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+              <svg class="w-10 h-10 mb-2 text-hw-yellow" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 7.5m0 0L7.5 12m4.5-4.5V16.5" />
+              </svg>
+              <p class="text-sm text-gray-300 font-semibold">Toca para subir tu imagen</p>
+              <p class="text-xs text-gray-500 mt-1">PNG, JPG o WEBP (máx. 5 MB)</p>
+            </div>
+            <input id="comprobante" type="file" accept="image/*" class="hidden" />
+          </label>
+          <div id="preview-container" class="hidden mt-3">
+            <img id="preview-img" alt="Vista previa" class="w-full max-h-56 object-contain rounded-xl border border-hw-border bg-hw-dark" />
+            <div class="flex items-center justify-between mt-2">
+              <p id="preview-name" class="text-xs text-gray-400 truncate max-w-[70%]"></p>
+              <button type="button" id="quitar-comprobante" class="text-xs bg-hw-red hover:bg-red-700 text-white font-bold px-3 py-1 rounded-full transition">🗑️ Quitar</button>
+            </div>
+          </div>
+          <p id="error-comprobante" class="text-hw-red text-xs mt-2 hidden">Debes subir tu comprobante.</p>
+        </div>
+
+        <button id="btn-whatsapp"
+          class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-700 text-white font-bold text-base sm:text-lg px-8 py-4 rounded-full transition shadow-lg flex items-center justify-center gap-2">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+          Enviar pedido por WhatsApp
+        </button>
+        <p class="text-xs text-gray-500 text-center mt-3">Tu pedido se guarda automáticamente.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ÉXITO -->
+  <div id="modal-exito" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-hw-card border-2 border-green-500 rounded-3xl max-w-md w-full p-6 sm:p-8 text-center">
+      <div class="text-5xl sm:text-6xl mb-4">✅</div>
+      <h3 class="font-display text-2xl sm:text-3xl text-green-400 mb-3">¡PEDIDO REGISTRADO!</h3>
+      <p class="text-gray-300 mb-4 text-sm sm:text-base">Tu código:</p>
+      <div class="bg-hw-dark border-2 border-hw-yellow rounded-xl p-4 mb-4">
+        <p id="codigo-pedido" class="font-mono text-xl sm:text-2xl text-hw-yellow tracking-wider">HW-XXXXXX</p>
+      </div>
+      <p class="text-xs sm:text-sm text-gray-400 mb-6">Guarda este código para consultar tus números.</p>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button id="copiar-codigo" class="flex-1 bg-hw-yellow text-hw-dark font-bold px-4 py-3 rounded-full hover:bg-yellow-400 transition text-sm">
+          📋 Copiar código
+        </button>
+        <button id="cerrar-exito" class="flex-1 bg-hw-red text-white font-bold px-4 py-3 rounded-full hover:bg-red-700 transition text-sm">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="border-t border-hw-border py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="font-display text-xl sm:text-2xl text-hw-yellow tracking-wide mb-2">🏎️ RIFA HOT WHEELS</p>
+      <p class="text-gray-500 text-xs sm:text-sm mb-4">Rifa legal en República Dominicana © 2024</p>
+      <a href="admin.html" class="text-xs text-gray-600 hover:text-hw-yellow transition">Panel Admin 🔒</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/consulta.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
