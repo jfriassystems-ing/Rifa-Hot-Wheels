@@ -455,20 +455,20 @@ const App = {
       const mensaje = [
         CONFIG.textos.mensajeWhatsappPedido,
         ``,
-        `👤 *Nombre:* ${pedido.nombre}`,
-        `📱 *Teléfono:* ${Utils.formatearTelefono(pedido.telefono)}`,
+        ` *Nombre:* ${pedido.nombre}`,
+        ` *Teléfono:* ${Utils.formatearTelefono(pedido.telefono)}`,
         ``,
-        `🎯 *Números:*`,
+        ` *Números:*`,
         pedido.numeros.map(n => `   • #${n}`).join('\n'),
         ``,
-        `🔢 *Cantidad:* ${pedido.numeros.length}`,
-        `💰 *Total:* ${Utils.formatoMoneda(pedido.total)}`,
+        ` *Cantidad:* ${pedido.numeros.length}`,
+        ` *Total:* ${Utils.formatoMoneda(pedido.total)}`,
         ``,
-        `🆔 *Código:* ${pedido.id}`,
+        ` *Código:* ${pedido.id}`,
         ``,
-        `📸 *Comprobante:* ${pedido.comprobante}`,
+        ` *Comprobante:* ${pedido.comprobante}`,
         ``,
-        `✅ ¡Gracias!`
+        ` ¡Gracias! Recuerda: el sorteo se realiza al venderse los 100 números.`
       ].join('\n');
 
       window.open(`https://wa.me/${CONFIG.contacto.whatsapp}?text=${encodeURIComponent(mensaje)}`, '_blank');
