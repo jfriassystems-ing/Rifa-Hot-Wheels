@@ -118,6 +118,7 @@ const App = {
   },
 
     // ==================== BANNER DESTACADO ====================
+    // ==================== BANNER DESTACADO (CARRUSEL) ====================
   async renderizarBanner() {
     const contenedor = document.getElementById('banner-destacado');
     const grid = document.getElementById('banner-grid');
@@ -132,12 +133,52 @@ const App = {
 
     contenedor.classList.remove('hidden');
 
-    grid.innerHTML = banners.map((b, i) => {
-      const esPrimero = i === 0;
+    // === 1 SOLO BANNER → imagen estática ===
+    if (banners.length === 1) {
+      const b = banners[0];
       const contenido = `
-        <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-hw-border hover:border-hw-yellow transition group ${esPrimero ? 'aspect-[16/9] sm:aspect-[21/9]' : 'aspect-video'}">
+        <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-hw-border aspect-[16/9] sm:aspect-[21/9]">
           <img src="${Utils.escapeHTML(b.imagen)}" alt="${Utils.escapeHTML(b.titulo || 'Banner')}"
-               class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
+               class="w-full h-full object-cover" loading="lazy" />
+          ${(b.titulo || b.subtitulo) ? `
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 sm:p-6">
+              ${b.titulo ? `<h3 class="font-display text-2xl sm:text-4xl text-hw-yellow tracking-wide leading-tight">${Utils.escapeHTML(b.titulo)}</h3>` : ''}
+              ${b.subtitulo ? `<p class="text-white text-sm sm:text-base mt-1">${Utils.escapeHTML(b.subtitulo)}</p>` : ''}
+            </div>
+          ` : ''}
+        </div>
+      `;
+      grid.innerHTML = b.link
+        ? `<a href="${Utils.escapeHTML(b.link)}" target="_blank" rel="noopener" class="block">${contenido}</a>`
+        : contenido;
+      return;
+    }
+
+    // === VARIOS BANNERS → carrusel con autoplay ===
+    let indiceActual = 0;
+    let autoplayActivo = true;
+    let autoplayTimer = null;
+
+    grid.innerHTML = `
+      <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-hw-border aspect-[16/9] sm:aspect-[21/9]">
+        <div id="banner-track" class="flex h-full transition-transform duration-700 ease-out"></div>
+
+        <button class="banner-prev absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/60 hover:bg-hw-yellow hover:text-hw-dark text-white flex items-center justify-center transition z-10 text-2xl leading-none">‹</button>
+        <button class="banner-next absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/60 hover:bg-hw-yellow hover:text-hw-dark text-white flex items-center justify-center transition z-10 text-2xl leading-none">›</button>
+
+        <div class="banner-dots absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10"></div>
+      </div>
+    `;
+
+    const track = document.getElementById('banner-track');
+    const dotsContainer = grid.querySelector('.banner-dots');
+
+    // Construir cada slide
+    track.innerHTML = banners.map(b => {
+      const contenido = `
+        <div class="w-full h-full flex-shrink-0 relative">
+          <img src="${Utils.escapeHTML(b.imagen)}" alt="${Utils.escapeHTML(b.titulo || 'Banner')}"
+               class="w-full h-full object-cover" loading="lazy" />
           ${(b.titulo || b.subtitulo) ? `
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 sm:p-6">
               ${b.titulo ? `<h3 class="font-display text-2xl sm:text-4xl text-hw-yellow tracking-wide leading-tight">${Utils.escapeHTML(b.titulo)}</h3>` : ''}
@@ -148,10 +189,73 @@ const App = {
       `;
 
       if (b.link) {
-        return `<a href="${Utils.escapeHTML(b.link)}" target="_blank" rel="noopener" class="block">${contenido}</a>`;
+        return `<a href="${Utils.escapeHTML(b.link)}" target="_blank" rel="noopener" class="w-full h-full flex-shrink-0 block">${contenido}</a>`;
       }
       return contenido;
     }).join('');
+
+    // Dots
+    dotsContainer.innerHTML = banners.map((_, i) => `
+      <button data-dot="${i}" class="banner-dot h-2.5 rounded-full transition ${i === 0 ? 'bg-hw-yellow w-8' : 'bg-white/50 w-2.5'}"></button>
+    `).join('');
+
+    const actualizar = (nuevoIndice) => {
+      indiceActual = (nuevoIndice + banners.length) % banners.length;
+      track.style.transform = `translateX(-${indiceActual * 100}%)`;
+
+      dotsContainer.querySelectorAll('.banner-dot').forEach((d, i) => {
+        d.className = `banner-dot h-2.5 rounded-full transition ${i === indiceActual ? 'bg-hw-yellow w-8' : 'bg-white/50 w-2.5'}`;
+      });
+    };
+
+    const iniciarAutoplay = () => {
+      detenerAutoplay();
+      autoplayTimer = setInterval(() => {
+        if (autoplayActivo) actualizar(indiceActual + 1);
+      }, 4000);
+    };
+
+    const detenerAutoplay = () => {
+      if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
+    };
+
+    // Flechas
+    grid.querySelector('.banner-prev').addEventListener('click', () => { actualizar(indiceActual - 1); iniciarAutoplay(); });
+    grid.querySelector('.banner-next').addEventListener('click', () => { actualizar(indiceActual + 1); iniciarAutoplay(); });
+
+    // Dots
+    dotsContainer.querySelectorAll('.banner-dot').forEach(dot => {
+      dot.addEventListener('click', () => { actualizar(Number(dot.dataset.dot)); iniciarAutoplay(); });
+    });
+
+    // Pausar al hover (desktop)
+    const carruselEl = grid.querySelector('.relative');
+    carruselEl.addEventListener('mouseenter', () => { autoplayActivo = false; });
+    carruselEl.addEventListener('mouseleave', () => { autoplayActivo = true; });
+
+    // Swipe táctil (móvil)
+    let touchStartX = 0;
+    let touchDeltaX = 0;
+
+    carruselEl.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchDeltaX = 0;
+      autoplayActivo = false;
+    }, { passive: true });
+
+    carruselEl.addEventListener('touchmove', (e) => {
+      touchDeltaX = e.touches[0].clientX - touchStartX;
+    }, { passive: true });
+
+    carruselEl.addEventListener('touchend', () => {
+      if (Math.abs(touchDeltaX) > 50) {
+        if (touchDeltaX < 0) actualizar(indiceActual + 1);
+        else actualizar(indiceActual - 1);
+      }
+      setTimeout(() => { autoplayActivo = true; }, 500);
+    }, { passive: true });
+
+    iniciarAutoplay();
   },
 
 
