@@ -8,6 +8,8 @@ const Admin = {
   carritoEnEdicion: null,
   fotosNuevas: [],
   fotosExistentes: [],
+  bannerEnEdicion: null,
+  bannerArchivo: null,
   confirmCallback: null,
 
   el: {},
@@ -82,6 +84,26 @@ const Admin = {
       errorModalCarrito: document.getElementById('error-modal-carrito'),
       btnGuardarCarrito: document.getElementById('btn-guardar-carrito'),
       cancelarModalCarrito: document.getElementById('cancelar-modal-carrito'),
+
+      // Banner
+      listaBanner: document.getElementById('lista-banner'),
+      btnNuevoBanner: document.getElementById('btn-nuevo-banner'),
+      modalBanner: document.getElementById('modal-banner'),
+      cerrarModalBanner: document.getElementById('cerrar-modal-banner'),
+      tituloModalBanner: document.getElementById('titulo-modal-banner'),
+      formBanner: document.getElementById('form-banner'),
+      inputBannerTitulo: document.getElementById('input-banner-titulo'),
+      inputBannerSubtitulo: document.getElementById('input-banner-subtitulo'),
+      inputBannerLink: document.getElementById('input-banner-link'),
+      inputBannerActivo: document.getElementById('input-banner-activo'),
+      bannerPreview: document.getElementById('banner-preview'),
+      bannerPreviewContainer: document.getElementById('banner-preview-container'),
+      bannerDropzone: document.getElementById('banner-dropzone'),
+      bannerInputFile: document.getElementById('banner-input-file'),
+      bannerQuitarFoto: document.getElementById('banner-quitar-foto'),
+      errorModalBanner: document.getElementById('error-modal-banner'),
+      btnGuardarBanner: document.getElementById('btn-guardar-banner'),
+      cancelarModalBanner: document.getElementById('cancelar-modal-banner'),
 
       modalConfirm: document.getElementById('modal-confirm'),
       confirmTitulo: document.getElementById('confirm-titulo'),
@@ -168,6 +190,19 @@ const Admin = {
 
     this.el.formNuevaCategoria.addEventListener('submit', (e) => this.agregarCategoria(e));
 
+    // Banner
+    if (this.el.btnNuevoBanner) {
+      this.el.btnNuevoBanner.addEventListener('click', () => this.abrirModalBanner());
+      this.el.cerrarModalBanner.addEventListener('click', () => this.cerrarModalBannerFn());
+      this.el.modalBanner.addEventListener('click', (e) => {
+        if (e.target === this.el.modalBanner) this.cerrarModalBannerFn();
+      });
+      this.el.cancelarModalBanner.addEventListener('click', () => this.cerrarModalBannerFn());
+      this.el.formBanner.addEventListener('submit', (e) => this.guardarBanner(e));
+      this.el.bannerInputFile.addEventListener('change', (e) => this.seleccionarFotoBanner(e.target.files[0]));
+      this.el.bannerQuitarFoto.addEventListener('click', () => this.quitarFotoBanner());
+    }
+
     this.el.confirmCancelar.addEventListener('click', () => this.cerrarConfirm());
     this.el.confirmAceptar.addEventListener('click', () => {
       if (this.confirmCallback) this.confirmCallback();
@@ -209,6 +244,7 @@ const Admin = {
     if (seccion === 'numeros') await this.renderNumerosAdmin();
     if (seccion === 'carritos') await this.renderCarritos();
     if (seccion === 'categorias') await this.renderCategorias();
+    if (seccion === 'banner') await this.renderBanner();
   },
 
   // ==================== DASHBOARD ====================
@@ -754,6 +790,176 @@ const Admin = {
         await this.renderCategorias();
       });
     })();
+  },
+
+  // ==================== BANNER ====================
+  async renderBanner() {
+    if (!this.el.listaBanner) return;
+    const banners = await Storage.getBanners();
+
+    if (banners.length === 0) {
+      this.el.listaBanner.innerHTML = `
+        <div class="col-span-full bg-admin-card border border-admin-border rounded-2xl p-8 text-center">
+          <div class="text-5xl mb-3">🖼️</div>
+          <p class="text-gray-400 mb-4">No hay banners. Sube uno para que aparezca en el index.</p>
+          <button onclick="Admin.abrirModalBanner()" class="bg-hw-yellow text-hw-dark font-bold px-6 py-3 rounded-xl hover:bg-yellow-400 transition">➕ Subir primer banner</button>
+        </div>
+      `;
+      return;
+    }
+
+    this.el.listaBanner.innerHTML = banners.map(b => `
+      <div class="bg-admin-card border ${b.activo ? 'border-hw-yellow' : 'border-admin-border'} rounded-2xl overflow-hidden group">
+        <div class="relative aspect-video bg-admin-bg">
+          <img src="${Utils.escapeHTML(b.imagen)}" alt="${Utils.escapeHTML(b.titulo || 'Banner')}" class="w-full h-full object-cover" loading="lazy" />
+          ${b.activo ? `<div class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">✅ Activo</div>` : `<div class="absolute top-2 left-2 bg-gray-600 text-white text-xs font-bold px-2 py-1 rounded-full">⏸ Inactivo</div>`}
+          <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+            <button onclick="Admin.editarBanner('${b.id}')" class="bg-hw-yellow text-hw-dark font-bold px-3 py-2 rounded-full text-xs hover:bg-yellow-400 transition">✏️ Editar</button>
+            <button onclick="Admin.eliminarBanner('${b.id}')" class="bg-hw-red text-white font-bold px-3 py-2 rounded-full text-xs hover:bg-red-700 transition">🗑️</button>
+          </div>
+        </div>
+        <div class="p-3">
+          ${b.titulo ? `<p class="text-sm text-white font-semibold truncate">${Utils.escapeHTML(b.titulo)}</p>` : '<p class="text-sm text-gray-500 italic">Sin título</p>'}
+          ${b.subtitulo ? `<p class="text-xs text-gray-400 truncate mt-0.5">${Utils.escapeHTML(b.subtitulo)}</p>` : ''}
+          <label class="flex items-center gap-2 mt-2 cursor-pointer">
+            <input type="checkbox" ${b.activo ? 'checked' : ''} onchange="Admin.toggleBannerActivo('${b.id}', this.checked)" class="w-4 h-4 rounded accent-hw-yellow" />
+            <span class="text-xs text-gray-400">Activo en index</span>
+          </label>
+        </div>
+      </div>
+    `).join('');
+  },
+
+  async toggleBannerActivo(id, valor) {
+    await Storage.actualizarBanner(id, { activo: valor });
+    this.toast(valor ? '✅ Activo' : '⏸ Inactivo', 'info');
+    await this.renderBanner();
+  },
+
+  async abrirModalBanner(banner = null) {
+    if (!this.el.modalBanner) return;
+    this.bannerEnEdicion = banner;
+    this.bannerArchivo = null;
+
+    this.el.formBanner.reset();
+    this.el.errorModalBanner.classList.add('hidden');
+
+    if (banner) {
+      this.el.tituloModalBanner.textContent = 'EDITAR BANNER';
+      this.el.inputBannerTitulo.value = banner.titulo || '';
+      this.el.inputBannerSubtitulo.value = banner.subtitulo || '';
+      this.el.inputBannerLink.value = banner.link || '';
+      this.el.inputBannerActivo.checked = banner.activo !== false;
+
+      if (banner.imagen) {
+        this.el.bannerPreview.src = banner.imagen;
+        this.el.bannerPreviewContainer.classList.remove('hidden');
+        this.el.bannerDropzone.classList.add('hidden');
+      } else {
+        this.el.bannerPreviewContainer.classList.add('hidden');
+        this.el.bannerDropzone.classList.remove('hidden');
+      }
+    } else {
+      this.el.tituloModalBanner.textContent = 'NUEVO BANNER';
+      this.el.inputBannerActivo.checked = true;
+      this.el.bannerPreviewContainer.classList.add('hidden');
+      this.el.bannerDropzone.classList.remove('hidden');
+    }
+
+    this.el.modalBanner.classList.remove('hidden');
+    this.el.modalBanner.classList.add('flex');
+    document.body.classList.add('modal-abierto');
+  },
+
+  cerrarModalBannerFn() {
+    this.el.modalBanner.classList.add('hidden');
+    this.el.modalBanner.classList.remove('flex');
+    document.body.classList.remove('modal-abierto');
+    this.bannerEnEdicion = null;
+    this.bannerArchivo = null;
+  },
+
+  async seleccionarFotoBanner(file) {
+    if (!file) return;
+    const v = Utils.esImagenValida(file);
+    if (!v.valido) { alert(v.error); return; }
+
+    const preview = await Utils.archivoADataURL(file);
+    this.bannerArchivo = { file, preview };
+    this.el.bannerPreview.src = preview;
+    this.el.bannerPreviewContainer.classList.remove('hidden');
+    this.el.bannerDropzone.classList.add('hidden');
+    this.el.errorModalBanner.classList.add('hidden');
+  },
+
+  quitarFotoBanner() {
+    this.bannerArchivo = null;
+    this.el.bannerInputFile.value = '';
+    this.el.bannerPreview.src = '';
+    this.el.bannerPreviewContainer.classList.add('hidden');
+    this.el.bannerDropzone.classList.remove('hidden');
+  },
+
+  async guardarBanner(e) {
+    e.preventDefault();
+
+    const titulo = this.el.inputBannerTitulo.value.trim();
+    const subtitulo = this.el.inputBannerSubtitulo.value.trim();
+    const link = this.el.inputBannerLink.value.trim();
+    const activo = this.el.inputBannerActivo.checked;
+
+    const tieneImagenExistente = this.bannerEnEdicion && this.bannerEnEdicion.imagen;
+    if (!this.bannerArchivo && !tieneImagenExistente) {
+      this.el.errorModalBanner.textContent = 'Sube una imagen.';
+      this.el.errorModalBanner.classList.remove('hidden');
+      return;
+    }
+
+    const textoOrig = this.el.btnGuardarBanner.innerHTML;
+    this.el.btnGuardarBanner.disabled = true;
+    this.el.btnGuardarBanner.innerHTML = `<div class="spinner mx-auto"></div>`;
+
+    try {
+      let imagenUrl = tieneImagenExistente ? this.bannerEnEdicion.imagen : '';
+
+      if (this.bannerArchivo) {
+        imagenUrl = await Storage.subirImagenCloudinary(this.bannerArchivo.file, 'banner');
+      }
+
+      const data = { titulo, subtitulo, imagen: imagenUrl, link, activo };
+
+      if (this.bannerEnEdicion) {
+        await Storage.actualizarBanner(this.bannerEnEdicion.id, data);
+        this.toast('Banner actualizado', 'success');
+      } else {
+        await Storage.guardarBanner(data);
+        this.toast('Banner agregado', 'success');
+      }
+
+      this.cerrarModalBannerFn();
+      await this.renderBanner();
+
+    } catch (err) {
+      console.error(err);
+      this.el.errorModalBanner.textContent = 'Error: ' + (err.message || 'Intenta de nuevo.');
+      this.el.errorModalBanner.classList.remove('hidden');
+    } finally {
+      this.el.btnGuardarBanner.disabled = false;
+      this.el.btnGuardarBanner.innerHTML = textoOrig;
+    }
+  },
+
+  async editarBanner(id) {
+    const banner = await Storage.getBannerPorId(id);
+    if (banner) await this.abrirModalBanner(banner);
+  },
+
+  eliminarBanner(id) {
+    this.confirmar('Eliminar banner', '¿Eliminar este banner?', async () => {
+      await Storage.eliminarBanner(id);
+      this.toast('Banner eliminado', 'info');
+      await this.renderBanner();
+    });
   },
 
   // ==================== EXPORTAR CSV ====================

@@ -99,120 +99,13 @@
           <button data-seccion="categorias" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-semibold transition">
             <span class="text-xl">🏷️</span><span>Categorías</span>
           </button>
+                   <button data-seccion="banner" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-semibold transition">
+            <span class="text-xl">🖼️</span><span>Banner</span>
+          </button>
         </nav>
       </aside>
 
       <div id="sidebar-overlay" class="fixed inset-0 z-20 bg-black/60 hidden md:hidden"></div>
-
-      <main class="flex-1 p-4 sm:p-6 lg:p-8 min-w-0">
-
-        <!-- DASHBOARD -->
-        <section id="seccion-dashboard" class="seccion">
-          <h2 class="font-display text-3xl sm:text-4xl text-hw-yellow tracking-wide mb-6">DASHBOARD</h2>
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
-            <div class="bg-admin-card border border-admin-border rounded-2xl p-4">
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Pedidos</p>
-              <p class="font-display text-3xl sm:text-4xl text-white" id="stat-pedidos">0</p>
-            </div>
-            <div class="bg-admin-card border border-admin-border rounded-2xl p-4">
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Confirmados</p>
-              <p class="font-display text-3xl sm:text-4xl text-green-400" id="stat-confirmados">0</p>
-            </div>
-            <div class="bg-admin-card border border-admin-border rounded-2xl p-4">
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Pendientes</p>
-              <p class="font-display text-3xl sm:text-4xl text-yellow-400" id="stat-pendientes">0</p>
-            </div>
-            <div class="bg-admin-card border border-admin-border rounded-2xl p-4">
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Rechazados</p>
-              <p class="font-display text-3xl sm:text-4xl text-red-400" id="stat-rechazados">0</p>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
-            <div class="bg-admin-card border border-admin-border rounded-2xl p-5">
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Números vendidos</p>
-              <p class="font-display text-4xl text-hw-yellow" id="stat-numeros-vendidos">0 / 100</p>
-              <div class="mt-3 h-2 bg-admin-bg rounded-full overflow-hidden">
-                <div id="barra-progreso" class="h-full bg-gradient-to-r from-hw-red to-hw-yellow transition-all duration-500" style="width: 0%"></div>
-              </div>
-              <p class="text-xs text-gray-500 mt-2" id="stat-porcentaje">0% vendido</p>
-            </div>
-            <div class="bg-admin-card border border-admin-border rounded-2xl p-5">
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Recaudado</p>
-              <p class="font-display text-3xl sm:text-4xl text-green-400" id="stat-recaudado">$0</p>
-              <p class="text-xs text-gray-500 mt-2">Solo confirmados</p>
-            </div>
-            <div class="bg-admin-card border border-admin-border rounded-2xl p-5">
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Por cobrar</p>
-              <p class="font-display text-3xl sm:text-4xl text-yellow-400" id="stat-potencial">$0</p>
-              <p class="text-xs text-gray-500 mt-2">Pendientes</p>
-            </div>
-          </div>
-          <div class="bg-admin-card border border-admin-border rounded-2xl p-5">
-            <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
-              <p class="text-sm text-gray-400 uppercase tracking-wide">Últimos pedidos</p>
-              <button onclick="Admin.irASeccion('pedidos')" class="text-xs text-admin-accent hover:text-hw-yellow transition">Ver todos →</button>
-            </div>
-            <div id="ultimos-pedidos" class="space-y-2"></div>
-          </div>
-        </section>
-
-        <!-- PEDIDOS -->
-        <section id="seccion-pedidos" class="seccion hidden">
-          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-            <h2 class="font-display text-3xl sm:text-4xl text-hw-yellow tracking-wide">PEDIDOS</h2>
-            <button id="btn-exportar-csv" class="bg-admin-accent hover:bg-blue-700 text-white text-sm font-bold px-4 py-2 rounded-full transition">
-              📥 Exportar CSV
-            </button>
-          </div>
-          <div class="bg-admin-card border border-admin-border rounded-2xl p-4 mb-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <input type="text" id="busqueda-pedidos" placeholder="Nombre, teléfono o código..."
-                class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition text-sm" />
-              <select id="filtro-estado" class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-hw-yellow transition text-sm">
-                <option value="todos">Todos los estados</option>
-                <option value="pendiente">⏳ Pendiente</option>
-                <option value="confirmado">✅ Confirmado</option>
-                <option value="rechazado">❌ Rechazado</option>
-              </select>
-              <input type="text" id="filtro-numero" placeholder="Buscar por número (#12)"
-                class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition text-sm" />
-              <button id="btn-limpiar-filtros" class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-2.5 text-gray-300 hover:border-hw-yellow transition text-sm">
-                🧹 Limpiar
-              </button>
-            </div>
-          </div>
-          <p class="text-xs text-gray-500 mb-3" id="contador-pedidos">0 pedidos</p>
-          <div id="lista-pedidos" class="space-y-3"></div>
-        </section>
-
-        <!-- NÚMEROS -->
-        <section id="seccion-numeros" class="seccion hidden">
-          <h2 class="font-display text-3xl sm:text-4xl text-hw-yellow tracking-wide mb-6">MAPA DE NÚMEROS</h2>
-          <div class="bg-admin-card border border-admin-border rounded-2xl p-4 mb-4">
-            <div class="flex flex-wrap gap-4 text-sm">
-              <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-green-600"></span><span class="text-gray-300">Disponible</span></div>
-              <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-yellow-500"></span><span class="text-gray-300">Pendiente</span></div>
-              <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-hw-red"></span><span class="text-gray-300">Vendido</span></div>
-            </div>
-          </div>
-          <div id="grid-numeros-admin" class="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-12 lg:grid-cols-15 gap-2"></div>
-        </section>
-
-        <!-- CARRITOS -->
-        <section id="seccion-carritos" class="seccion hidden">
-          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-            <h2 class="font-display text-3xl sm:text-4xl text-hw-yellow tracking-wide">CARRITOS</h2>
-            <button id="btn-nuevo-carrito" class="bg-hw-yellow text-hw-dark text-sm font-bold px-4 py-2 rounded-full hover:bg-yellow-400 transition">
-              ➕ Nuevo carrito
-            </button>
-          </div>
-          <div class="bg-admin-card border border-admin-border rounded-2xl p-4 mb-4">
-            <p class="text-xs text-gray-400">
-              💡 Cada carrito puede tener hasta <strong class="text-hw-yellow">3 fotos</strong>. Marca el ⭐ <strong class="text-hw-yellow">"Destacado"</strong> para que aparezca en la galería pública.
-            </p>
-          </div>
-          <div id="lista-carritos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"></div>
-        </section>
 
         <!-- CATEGORÍAS -->
         <section id="seccion-categorias" class="seccion hidden">
@@ -230,7 +123,41 @@
           <div id="lista-categorias" class="space-y-2"></div>
         </section>
 
+        <!-- BANNER -->
+        <section id="seccion-banner" class="seccion hidden">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <h2 class="font-display text-3xl sm:text-4xl text-hw-yellow tracking-wide">BANNER DESTACADO</h2>
+            <button id="btn-nuevo-banner" class="bg-hw-yellow text-hw-dark text-sm font-bold px-4 py-2 rounded-full hover:bg-yellow-400 transition">
+              ➕ Nuevo banner
+            </button>
+          </div>
+          <div class="bg-admin-card border border-admin-border rounded-2xl p-4 mb-4">
+            <p class="text-xs text-gray-400">
+              💡 Estas imágenes aparecen <strong class="text-hw-yellow">entre el hero y la galería</strong> en el index. Puedes poner 1 o varias. La primera será la principal.
+            </p>
+          </div>
+          <div id="lista-banner" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"></div>
+        </section>
+
       </main>
+              <!-- BANNER -->
+        <section id="seccion-banner" class="seccion hidden">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <h2 class="font-display text-3xl sm:text-4xl text-hw-yellow tracking-wide">BANNER DESTACADO</h2>
+            <button id="btn-nuevo-banner" class="bg-hw-yellow text-hw-dark text-sm font-bold px-4 py-2 rounded-full hover:bg-yellow-400 transition">
+              ➕ Nuevo banner
+            </button>
+          </div>
+          <div class="bg-admin-card border border-admin-border rounded-2xl p-4 mb-4">
+            <p class="text-xs text-gray-400">
+              💡 Estas imágenes aparecen <strong class="text-hw-yellow">entre el hero y la galería</strong> en el index. Puedes poner 1 o varias. La primera será la principal.
+            </p>
+          </div>
+          <div id="lista-banner" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"></div>
+        </section>
+
+
+
     </div>
   </div>
 
@@ -306,6 +233,76 @@
       </div>
     </div>
   </div>
+
+  <!-- MODAL BANNER -->
+  <div id="modal-banner" class="fixed inset-0 z-50 hidden items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-admin-card border border-admin-border sm:rounded-3xl w-full h-full sm:h-auto sm:max-w-2xl sm:max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div class="sticky top-0 bg-admin-card border-b border-admin-border px-4 sm:px-6 py-4 flex items-center justify-between z-10 safe-top">
+        <h3 id="titulo-modal-banner" class="font-display text-xl sm:text-2xl text-hw-yellow tracking-wide">NUEVO BANNER</h3>
+        <button id="cerrar-modal-banner" class="text-gray-400 hover:text-hw-red text-3xl leading-none">&times;</button>
+      </div>
+
+      <div class="p-4 sm:p-6">
+        <form id="form-banner" class="space-y-4">
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-1">Título (opcional)</label>
+            <input type="text" id="input-banner-titulo" placeholder="Ej: ¡Mira lo que puedes ganar!"
+              class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-1">Subtítulo (opcional)</label>
+            <input type="text" id="input-banner-subtitulo" placeholder="Ej: Más de 85 carritos Hot Wheels"
+              class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Imagen *</label>
+            <div id="banner-preview-container" class="hidden mb-3">
+              <img id="banner-preview" class="w-full max-h-56 object-cover rounded-xl border border-admin-border bg-admin-bg" />
+              <button type="button" id="banner-quitar-foto" class="mt-2 text-xs bg-hw-red hover:bg-red-700 text-white font-bold px-3 py-1 rounded-full transition">🗑️ Cambiar imagen</button>
+            </div>
+            <label id="banner-dropzone" class="aspect-video flex flex-col items-center justify-center border-2 border-dashed border-admin-border rounded-xl cursor-pointer bg-admin-bg hover:border-hw-yellow transition">
+              <svg class="w-10 h-10 text-hw-yellow mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              <span class="text-sm text-gray-400">Click para subir imagen</span>
+              <span class="text-xs text-gray-500 mt-1">PNG, JPG o WEBP (máx. 5 MB)</span>
+              <input type="file" accept="image/*" id="banner-input-file" class="hidden" />
+            </label>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-300 mb-1">Link (opcional)</label>
+            <input type="url" id="input-banner-link" placeholder="https://..."
+              class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition" />
+            <p class="text-xs text-gray-500 mt-1">Si pones un link, al hacer click en el banner se abrirá.</p>
+          </div>
+
+          <label class="flex items-center gap-3 bg-admin-bg border border-admin-border rounded-xl px-4 py-3 cursor-pointer hover:border-hw-yellow transition">
+            <input type="checkbox" id="input-banner-activo" checked class="w-5 h-5 rounded accent-hw-yellow" />
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-white">✅ Activo</p>
+              <p class="text-xs text-gray-500">Solo los activos aparecen en el index</p>
+            </div>
+          </label>
+
+          <p id="error-modal-banner" class="text-hw-red text-sm hidden"></p>
+
+          <div class="flex gap-3 pt-2">
+            <button type="button" id="cancelar-modal-banner" class="flex-1 bg-admin-bg border border-admin-border text-gray-300 font-bold px-4 py-3 rounded-xl hover:border-gray-600 transition">
+              Cancelar
+            </button>
+            <button type="submit" id="btn-guardar-banner" class="flex-1 bg-hw-yellow text-hw-dark font-bold px-4 py-3 rounded-xl hover:bg-yellow-400 transition">
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 
   <!-- MODAL CONFIRM -->
   <div id="modal-confirm" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">

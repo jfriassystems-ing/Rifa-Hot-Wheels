@@ -302,5 +302,52 @@ const Storage = {
     ]);
     const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
     return [headers.map(esc).join(','), ...filas.map(f => f.map(esc).join(','))].join('\n');
+  },
+
+  // ============================================================
+  //  BANNER (imágenes destacadas)
+  // ============================================================
+
+  async getBanners(soloActivos = false) {
+    let query = this.supabase.from('banner').select('*');
+    if (soloActivos) query = query.eq('activo', true);
+    const { data, error } = await query
+      .order('orden', { ascending: true })
+      .order('fecha_creacion', { ascending: true });
+    if (error) { console.error('getBanners:', error); return []; }
+    return data || [];
+  },
+
+  async getBannerPorId(id) {
+    const { data, error } = await this.supabase.from('banner').select('*').eq('id', id).maybeSingle();
+    if (error) { console.error('getBannerPorId:', error); return null; }
+    return data;
+  },
+
+  async guardarBanner(banner) {
+    const nuevo = {
+      id: banner.id || `ban-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      titulo: banner.titulo || '',
+      subtitulo: banner.subtitulo || '',
+      imagen: banner.imagen || '',
+      link: banner.link || '',
+      orden: banner.orden ?? Date.now(),
+      activo: banner.activo !== false
+    };
+    const { data, error } = await this.supabase.from('banner').insert(nuevo).select().single();
+    if (error) { console.error('guardarBanner:', error); throw new Error(error.message); }
+    return data;
+  },
+
+  async actualizarBanner(id, cambios) {
+    const { data, error } = await this.supabase.from('banner').update(cambios).eq('id', id).select().single();
+    if (error) { console.error('actualizarBanner:', error); return null; }
+    return data;
+  },
+
+  async eliminarBanner(id) {
+    const { error } = await this.supabase.from('banner').delete().eq('id', id);
+    if (error) { console.error('eliminarBanner:', error); return false; }
+    return true;
   }
 };

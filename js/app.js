@@ -22,6 +22,7 @@ const App = {
 
   async init() {
     this.cachearElementos();
+    await this.renderizarBanner();
     await this.renderizarGaleria();
     await this.recargarNumeros();
     this.renderizarDatosBancarios();
@@ -115,6 +116,44 @@ const App = {
 
     this.renderSecciones(this.galeria.carritosFiltrados);
   },
+
+    // ==================== BANNER DESTACADO ====================
+  async renderizarBanner() {
+    const contenedor = document.getElementById('banner-destacado');
+    const grid = document.getElementById('banner-grid');
+    if (!contenedor || !grid) return;
+
+    const banners = await Storage.getBanners(true);
+
+    if (banners.length === 0) {
+      contenedor.classList.add('hidden');
+      return;
+    }
+
+    contenedor.classList.remove('hidden');
+
+    grid.innerHTML = banners.map((b, i) => {
+      const esPrimero = i === 0;
+      const contenido = `
+        <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-hw-border hover:border-hw-yellow transition group ${esPrimero ? 'aspect-[16/9] sm:aspect-[21/9]' : 'aspect-video'}">
+          <img src="${Utils.escapeHTML(b.imagen)}" alt="${Utils.escapeHTML(b.titulo || 'Banner')}"
+               class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
+          ${(b.titulo || b.subtitulo) ? `
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 sm:p-6">
+              ${b.titulo ? `<h3 class="font-display text-2xl sm:text-4xl text-hw-yellow tracking-wide leading-tight">${Utils.escapeHTML(b.titulo)}</h3>` : ''}
+              ${b.subtitulo ? `<p class="text-white text-sm sm:text-base mt-1">${Utils.escapeHTML(b.subtitulo)}</p>` : ''}
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      if (b.link) {
+        return `<a href="${Utils.escapeHTML(b.link)}" target="_blank" rel="noopener" class="block">${contenido}</a>`;
+      }
+      return contenido;
+    }).join('');
+  },
+
 
   filtrarPorMarca(marca) {
     this.galeria.marcaActual = marca;
