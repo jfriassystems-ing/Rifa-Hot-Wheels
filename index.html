@@ -59,16 +59,13 @@
           GANA UN LOTE DE <span class="text-hw-red">+85 CARRITOS</span> <span class="text-hw-yellow">HOT WHEELS</span>
         </h1>
         <p class="text-base sm:text-lg lg:text-xl text-gray-300 mb-6 max-w-2xl mx-auto">
-  Solo <strong class="text-hw-yellow">100 números</strong> a <strong class="text-hw-yellow">$500 DOP</strong> cada uno.
-</p>
+          Solo <strong class="text-hw-yellow">100 números</strong> a <strong class="text-hw-yellow">$500 DOP</strong> cada uno.
+        </p>
 
-<!-- NUEVO: Aviso del sorteo -->
-<div class="inline-flex items-center gap-2 bg-hw-yellow/10 border border-hw-yellow/40 text-hw-yellow rounded-full px-4 py-2 mb-8 text-xs sm:text-sm font-semibold">
-  <span>🎲</span>
-  <span>El sorteo se realiza al venderse los 100 números</span>
-</div>
-
-
+        <div class="inline-flex items-center gap-2 bg-hw-yellow/10 border border-hw-yellow/40 text-hw-yellow rounded-full px-4 py-2 mb-8 text-xs sm:text-sm font-semibold">
+          <span>🎲</span>
+          <span>El sorteo se realiza al venderse los 100 números</span>
+        </div>
 
         <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12">
           <a href="#numeros" class="bg-hw-red hover:bg-red-700 text-white font-bold text-base sm:text-lg px-6 sm:px-8 py-4 rounded-full transition shadow-neon-red animate-pulse-soft">
@@ -104,6 +101,19 @@
         <p class="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">Más de 85 carritos Hot Wheels destapados, en excelente estado.</p>
       </div>
 
+      <!-- BUSCADOR -->
+      <div id="galeria-buscador" class="hidden mb-6">
+        <div class="max-w-xl mx-auto relative">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg pointer-events-none">🔍</span>
+          <input
+            type="text"
+            id="galeria-busqueda-input"
+            placeholder="Buscar por marca, nombre o descripción..."
+            class="w-full bg-hw-card border border-hw-border rounded-full pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-hw-yellow transition text-sm"
+          />
+        </div>
+      </div>
+
       <div id="galeria-filtros" class="flex flex-wrap justify-center gap-2 mb-8"></div>
 
       <div id="galeria-secciones"></div>
@@ -121,10 +131,10 @@
       <div class="text-center mb-8 sm:mb-10">
         <h2 class="font-display text-3xl sm:text-5xl lg:text-6xl text-hw-yellow tracking-wide mb-4">ELIGE TUS NÚMEROS</h2>
         <div class="bg-hw-card border border-hw-yellow/40 rounded-2xl p-4 mb-6 max-w-2xl mx-auto">
-  <p class="text-center text-sm text-gray-300">
-    🎲 <strong class="text-hw-yellow">Importante:</strong> El sorteo se realizará cuando se completen los 100 números vendidos.
-  </p>
-</div>
+          <p class="text-center text-sm text-gray-300">
+            🎲 <strong class="text-hw-yellow">Importante:</strong> El sorteo se realizará cuando se completen los 100 números vendidos.
+          </p>
+        </div>
       </div>
 
       <div class="flex flex-wrap justify-center gap-3 sm:gap-6 mb-6 sm:mb-8 text-xs sm:text-sm">
@@ -245,51 +255,49 @@
     </div>
   </div>
 
-<!-- ==================== MODAL DE BIENVENIDA ==================== -->
-<div id="modal-bienvenida" class="fixed inset-0 z-[80] hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-  <div class="bg-hw-card border-2 border-hw-yellow rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slide-up">
-    <div class="relative bg-gradient-to-br from-hw-red to-red-900 px-6 py-6 text-center">
-      <div class="text-5xl mb-2">🏎️</div>
-      <h3 class="font-display text-3xl sm:text-4xl text-white tracking-wide leading-tight">¡BIENVENIDO A LA RIFA!</h3>
-      <p class="text-hw-yellow text-sm mt-2 font-bold">Hot Wheels · República Dominicana</p>
-    </div>
-    <div class="p-6 sm:p-8">
-      <div class="space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
-        <p>Estoy rifando mi colección de <strong class="text-hw-yellow">Hot Wheels</strong> porque ya no la puedo tener conmigo. 😔</p>
-        <p>La tenía en venta, pero sería muy difícil venderla toda por separado, así que decidí rifarla completa para que alguien la disfrute como se merece.</p>
-        <div class="bg-hw-dark border border-hw-border rounded-xl p-4 my-4">
-          <p class="text-center text-white">💰 Por solo <strong class="text-hw-yellow text-xl">$500 pesos</strong> por número</p>
-          <p class="text-center text-gray-400 text-xs mt-2">puedes ganar la colección completa</p>
-        </div>
-        <div class="grid grid-cols-3 gap-2 text-center my-4">
-          <div class="bg-hw-dark rounded-xl p-3 border border-hw-border">
-            <p class="font-display text-2xl text-hw-yellow">+85</p>
-            <p class="text-xs text-gray-500 mt-1">Piezas</p>
-          </div>
-          <div class="bg-hw-dark rounded-xl p-3 border border-hw-border">
-            <p class="font-display text-2xl text-hw-red">100</p>
-            <p class="text-xs text-gray-500 mt-1">Números</p>
-          </div>
-          <div class="bg-hw-dark rounded-xl p-3 border border-hw-border">
-            <p class="font-display text-2xl text-hw-yellow">$500</p>
-            <p class="text-xs text-gray-500 mt-1">Por número</p>
-          </div>
-        </div>
-        <p>Incluye <strong class="text-white">modelos difíciles de encontrar</strong> que ya no se consiguen fácilmente. ¡Una colección interesante para cualquier fanático!</p>
-        <div class="bg-hw-yellow/10 border-2 border-hw-yellow rounded-xl p-4 my-4">
-          <p class="text-center text-hw-yellow font-bold text-sm flex items-center justify-center gap-2">🎲 El sorteo se realizará cuando se vendan los 100 números</p>
-        </div>
+  <!-- MODAL DE BIENVENIDA -->
+  <div id="modal-bienvenida" class="fixed inset-0 z-[80] hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+    <div class="bg-hw-card border-2 border-hw-yellow rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slide-up">
+      <div class="relative bg-gradient-to-br from-hw-red to-red-900 px-6 py-6 text-center">
+        <div class="text-5xl mb-2">🏎️</div>
+        <h3 class="font-display text-3xl sm:text-4xl text-white tracking-wide leading-tight">¡BIENVENIDO A LA RIFA!</h3>
+        <p class="text-hw-yellow text-sm mt-2 font-bold">Hot Wheels · República Dominicana</p>
       </div>
-      <div class="mt-6 space-y-3">
-        <a href="#numeros" id="btn-bienvenida-participar" class="block w-full bg-hw-red hover:bg-red-700 text-white font-bold text-center py-4 rounded-full transition shadow-neon-red animate-pulse-soft">🎯 ¡Quiero participar!</a>
-        <button id="btn-bienvenida-cerrar" class="block w-full bg-hw-dark border border-hw-border text-gray-400 hover:text-white hover:border-hw-yellow font-semibold text-center py-3 rounded-full transition text-sm">Ver la galería primero</button>
+      <div class="p-6 sm:p-8">
+        <div class="space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+          <p>Estoy rifando mi colección de <strong class="text-hw-yellow">Hot Wheels</strong> porque ya no la puedo tener conmigo. 😔</p>
+          <p>La tenía en venta, pero sería muy difícil venderla toda por separado, así que decidí rifarla completa para que alguien la disfrute como se merece.</p>
+          <div class="bg-hw-dark border border-hw-border rounded-xl p-4 my-4">
+            <p class="text-center text-white">💰 Por solo <strong class="text-hw-yellow text-xl">$500 pesos</strong> por número</p>
+            <p class="text-center text-gray-400 text-xs mt-2">puedes ganar la colección completa</p>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center my-4">
+            <div class="bg-hw-dark rounded-xl p-3 border border-hw-border">
+              <p class="font-display text-2xl text-hw-yellow">+85</p>
+              <p class="text-xs text-gray-500 mt-1">Piezas</p>
+            </div>
+            <div class="bg-hw-dark rounded-xl p-3 border border-hw-border">
+              <p class="font-display text-2xl text-hw-red">100</p>
+              <p class="text-xs text-gray-500 mt-1">Números</p>
+            </div>
+            <div class="bg-hw-dark rounded-xl p-3 border border-hw-border">
+              <p class="font-display text-2xl text-hw-yellow">$500</p>
+              <p class="text-xs text-gray-500 mt-1">Por número</p>
+            </div>
+          </div>
+          <p>Incluye <strong class="text-white">modelos difíciles de encontrar</strong> que ya no se consiguen fácilmente. ¡Una colección interesante para cualquier fanático!</p>
+          <div class="bg-hw-yellow/10 border-2 border-hw-yellow rounded-xl p-4 my-4">
+            <p class="text-center text-hw-yellow font-bold text-sm flex items-center justify-center gap-2">🎲 El sorteo se realizará cuando se vendan los 100 números</p>
+          </div>
+        </div>
+        <div class="mt-6 space-y-3">
+          <a href="#numeros" id="btn-bienvenida-participar" class="block w-full bg-hw-red hover:bg-red-700 text-white font-bold text-center py-4 rounded-full transition shadow-neon-red animate-pulse-soft">🎯 ¡Quiero participar!</a>
+          <button id="btn-bienvenida-cerrar" class="block w-full bg-hw-dark border border-hw-border text-gray-400 hover:text-white hover:border-hw-yellow font-semibold text-center py-3 rounded-full transition text-sm">Ver la galería primero</button>
+        </div>
+        <p class="text-xs text-gray-500 text-center mt-4">Solo 100 números disponibles · Se venden rápido</p>
       </div>
-      <p class="text-xs text-gray-500 text-center mt-4">Solo 100 números disponibles · Se venden rápido</p>
     </div>
   </div>
-</div>
-
-
 
   <!-- MODAL ÉXITO -->
   <div id="modal-exito" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
@@ -299,11 +307,11 @@
       <p class="text-gray-300 mb-4 text-sm sm:text-base">Tu código:</p>
       <div class="bg-hw-dark border-2 border-hw-yellow rounded-xl p-4 mb-4">
         <p id="codigo-pedido" class="font-mono text-xl sm:text-2xl text-hw-yellow tracking-wider">HW-XXXXXX</p>
-      <div class="bg-hw-yellow/10 border border-hw-yellow/40 rounded-xl p-3 mb-4">
-  <p class="text-xs text-hw-yellow text-center">
-    🎲 Recuerda: el sorteo se realiza cuando se vendan los 100 números. ¡Comparte con tus amigos para acelerar el sorteo!
-  </p>
-</div>
+        <div class="bg-hw-yellow/10 border border-hw-yellow/40 rounded-xl p-3 mb-4">
+          <p class="text-xs text-hw-yellow text-center">
+            🎲 Recuerda: el sorteo se realiza cuando se vendan los 100 números. ¡Comparte con tus amigos para acelerar el sorteo!
+          </p>
+        </div>
       </div>
       <p class="text-xs sm:text-sm text-gray-400 mb-6">Guarda este código para consultar tus números.</p>
       <div class="flex flex-col sm:flex-row gap-3">

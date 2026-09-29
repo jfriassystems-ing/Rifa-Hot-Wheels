@@ -6,8 +6,8 @@ const Admin = {
   seccionActual: 'dashboard',
   pedidosFiltrados: [],
   carritoEnEdicion: null,
-  fotosNuevas: [],   // array de {file, preview, esNueva}
-  fotosExistentes: [], // URLs ya subidas
+  fotosNuevas: [],
+  fotosExistentes: [],
   confirmCallback: null,
 
   el: {},
@@ -432,7 +432,7 @@ const Admin = {
     this.el.listaCarritos.innerHTML = carritos.map(c => `
       <div class="bg-admin-card border ${c.destacado ? 'border-hw-yellow' : 'border-admin-border'} rounded-2xl overflow-hidden group">
         <div class="relative aspect-square bg-admin-bg">
-          <img src="${Utils.escapeHTML(c.fotos[0] || '')}" alt="${Utils.escapeHTML(c.nombre)}" class="w-full h-full object-contain" loading="lazy" />
+          <img src="${Utils.escapeHTML(c.fotos[0] || '')}" alt="${Utils.escapeHTML(c.nombre)}" class="w-full h-full object-cover" loading="lazy" />
           ${c.destacado ? `<div class="absolute top-2 left-2 bg-hw-yellow text-hw-dark text-xs font-bold px-2 py-1 rounded-full">⭐ Destacado</div>` : ''}
           <div class="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">📸 ${c.fotos.length}</div>
           <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
@@ -466,7 +466,6 @@ const Admin = {
     this.el.formCarrito.reset();
     this.el.errorModalCarrito.classList.add('hidden');
 
-    // Cargar categorías
     const cats = await Storage.getNombresCategorias();
     this.el.inputCarritoMarca.innerHTML = `<option value="">— Selecciona —</option>${cats.map(n => `<option value="${Utils.escapeHTML(n)}">${Utils.escapeHTML(n)}</option>`).join('')}`;
 
@@ -503,28 +502,25 @@ const Admin = {
 
     let html = '';
 
-    // Fotos existentes
     this.fotosExistentes.forEach((url, i) => {
       html += `
         <div class="relative aspect-square bg-admin-bg rounded-xl overflow-hidden border border-admin-border group">
-          <img src="${Utils.escapeHTML(url)}" class="w-full h-full object-contain" />
+          <img src="${Utils.escapeHTML(url)}" class="w-full h-full object-cover" />
           <button type="button" data-tipo="existente" data-index="${i}" class="btn-quitar-foto absolute top-1 right-1 w-7 h-7 rounded-full bg-hw-red text-white text-xs font-bold hover:bg-red-700 opacity-0 group-hover:opacity-100 transition">×</button>
         </div>
       `;
     });
 
-    // Fotos nuevas
     this.fotosNuevas.forEach((f, i) => {
       html += `
         <div class="relative aspect-square bg-admin-bg rounded-xl overflow-hidden border border-green-500 group">
-          <img src="${f.preview}" class="w-full h-full object-contain" />
+          <img src="${f.preview}" class="w-full h-full object-cover" />
           <div class="absolute top-1 left-1 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">Nueva</div>
           <button type="button" data-tipo="nueva" data-index="${i}" class="btn-quitar-foto absolute top-1 right-1 w-7 h-7 rounded-full bg-hw-red text-white text-xs font-bold hover:bg-red-700 opacity-0 group-hover:opacity-100 transition">×</button>
         </div>
       `;
     });
 
-    // Botón agregar (si no ha llegado al máximo)
     if (total < CONFIG.cloudinary.maxFotosPorCarrito) {
       html += `
         <label class="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-admin-border rounded-xl cursor-pointer bg-admin-bg hover:border-hw-yellow transition">
@@ -539,7 +535,6 @@ const Admin = {
 
     this.el.fotosGrid.innerHTML = html;
 
-    // Attach eventos
     const inputAdd = document.getElementById('input-add-foto');
     if (inputAdd) inputAdd.addEventListener('change', (e) => this.agregarFoto(e.target.files[0]));
 
@@ -583,7 +578,6 @@ const Admin = {
     this.el.btnGuardarCarrito.innerHTML = `<div class="spinner mx-auto"></div>`;
 
     try {
-      // Subir nuevas fotos a Cloudinary
       let urlsNuevas = [];
       if (this.fotosNuevas.length > 0) {
         urlsNuevas = await Promise.all(
@@ -675,13 +669,71 @@ const Admin = {
   },
 
   editarCategoria(id) {
-    const input = prompt('Nuevo nombre:');
-    if (input === null) return;
     (async () => {
-      const res = await Storage.renombrarCategoria(id, input);
-      if (!res.ok) return this.toast(res.error, 'error');
-      this.toast('Categoría actualizada', 'success');
-      await this.renderCategorias();
+      const cats = await Storage.getCategorias();
+      const cat = cats.find(c => c.id === id);
+      if (!cat) return;
+
+      const overlay = document.createElement('div');
+      overlay.className = 'fixed inset-0 z-[65] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm';
+      overlay.innerHTML = `
+        <div class="bg-admin-card border border-admin-border rounded-3xl max-w-md w-full p-6 shadow-2xl" onclick="event.stopPropagation()">
+          <h3 class="font-display text-2xl text-hw-yellow mb-4">EDITAR CATEGORÍA</h3>
+          <label class="block text-sm font-semibold text-gray-300 mb-1">Nombre</label>
+          <input type="text" id="edit-cat-input" value="${Utils.escapeHTML(cat.nombre)}"
+            class="w-full bg-admin-bg border border-admin-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-hw-yellow transition" />
+          <p id="edit-cat-error" class="text-hw-red text-sm mt-2 hidden"></p>
+          <div class="flex gap-3 mt-5">
+            <button id="edit-cat-cancelar" class="flex-1 bg-admin-bg border border-admin-border text-gray-300 font-bold px-4 py-3 rounded-xl hover:border-gray-600 transition">Cancelar</button>
+            <button id="edit-cat-guardar" class="flex-1 bg-hw-yellow text-hw-dark font-bold px-4 py-3 rounded-xl hover:bg-yellow-400 transition">Guardar</button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(overlay);
+
+      const input = overlay.querySelector('#edit-cat-input');
+      const error = overlay.querySelector('#edit-cat-error');
+      const btnGuardar = overlay.querySelector('#edit-cat-guardar');
+
+      input.focus();
+      input.select();
+
+      const cerrar = () => overlay.remove();
+
+      overlay.addEventListener('click', cerrar);
+      overlay.querySelector('#edit-cat-cancelar').addEventListener('click', cerrar);
+
+      const guardar = async () => {
+        const nuevo = input.value.trim();
+        if (!nuevo) {
+          error.textContent = 'El nombre no puede estar vacío.';
+          error.classList.remove('hidden');
+          return;
+        }
+        if (nuevo === cat.nombre) { cerrar(); return; }
+
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = 'Guardando...';
+
+        const res = await Storage.renombrarCategoria(id, nuevo);
+        if (!res.ok) {
+          error.textContent = res.error;
+          error.classList.remove('hidden');
+          btnGuardar.disabled = false;
+          btnGuardar.textContent = 'Guardar';
+          return;
+        }
+        this.toast('Categoría actualizada', 'success');
+        cerrar();
+        await this.renderCategorias();
+      };
+
+      btnGuardar.addEventListener('click', guardar);
+      input.addEventListener('keypress', (e) => { if (e.key === 'Enter') guardar(); });
+      document.addEventListener('keydown', function esc(e) {
+        if (e.key === 'Escape') { cerrar(); document.removeEventListener('keydown', esc); }
+      });
     })();
   },
 

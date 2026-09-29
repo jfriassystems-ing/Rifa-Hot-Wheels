@@ -1,6 +1,6 @@
 /**
  * LÓGICA DE LA LANDING PÚBLICA
- * Galería por secciones de marca + Checkout + Modal de bienvenida
+ * Galería por secciones de marca + Checkout + Modal de bienvenida + Carrusel
  */
 
 const App = {
@@ -14,7 +14,8 @@ const App = {
   galeria: {
     carritos: [],
     carritosFiltrados: [],
-    marcaActual: 'todas'
+    marcaActual: 'todas',
+    busquedaTexto: ''
   },
 
   el: {},
@@ -68,20 +69,24 @@ const App = {
     const contenedor = document.getElementById('galeria-secciones');
     const filtros = document.getElementById('galeria-filtros');
     const vacio = document.getElementById('galeria-vacia');
+    const buscador = document.getElementById('galeria-buscador');
 
     if (!contenedor) return;
 
     const carritos = await Storage.getCarritosDestacados();
     this.galeria.carritos = carritos;
+    this.galeria.carritosFiltrados = carritos;
 
     if (carritos.length === 0) {
       contenedor.innerHTML = '';
       if (filtros) filtros.innerHTML = '';
+      if (buscador) buscador.classList.add('hidden');
       if (vacio) vacio.classList.remove('hidden');
       return;
     }
 
     if (vacio) vacio.classList.add('hidden');
+    if (buscador) buscador.classList.remove('hidden');
 
     const marcas = [...new Set(carritos.map(c => c.marca))].sort();
     if (filtros) {
@@ -99,7 +104,16 @@ const App = {
       });
     }
 
-    this.renderSecciones(carritos);
+    const inputBusqueda = document.getElementById('galeria-busqueda-input');
+    if (inputBusqueda && !inputBusqueda.dataset.attached) {
+      inputBusqueda.dataset.attached = '1';
+      inputBusqueda.addEventListener('input', Utils.debounce((e) => {
+        this.galeria.busquedaTexto = e.target.value.trim().toLowerCase();
+        this.aplicarFiltrosGaleria();
+      }, 250));
+    }
+
+    this.renderSecciones(this.galeria.carritosFiltrados);
   },
 
   filtrarPorMarca(marca) {
@@ -113,16 +127,48 @@ const App = {
       }
     });
 
-    const filtrados = marca === 'todas'
-      ? this.galeria.carritos
-      : this.galeria.carritos.filter(c => c.marca === marca);
+    this.aplicarFiltrosGaleria();
+  },
 
+  aplicarFiltrosGaleria() {
+    const { marcaActual, busquedaTexto, carritos } = this.galeria;
+
+    let filtrados = carritos;
+
+    if (marcaActual !== 'todas') {
+      filtrados = filtrados.filter(c => c.marca === marcaActual);
+    }
+
+    if (busquedaTexto) {
+      filtrados = filtrados.filter(c =>
+        (c.nombre || '').toLowerCase().includes(busquedaTexto) ||
+        (c.marca || '').toLowerCase().includes(busquedaTexto) ||
+        (c.descripcion || '').toLowerCase().includes(busquedaTexto)
+      );
+    }
+
+    this.galeria.carritosFiltrados = filtrados;
     this.renderSecciones(filtrados);
   },
 
   renderSecciones(carritos) {
     const contenedor = document.getElementById('galeria-secciones');
+    const vacio = document.getElementById('galeria-vacia');
     if (!contenedor) return;
+
+    if (carritos.length === 0) {
+      contenedor.innerHTML = '';
+      if (vacio) {
+        vacio.classList.remove('hidden');
+        vacio.innerHTML = `
+          <div class="text-6xl mb-4">🔍</div>
+          <p class="text-gray-400">No se encontraron carritos con ese criterio.</p>
+        `;
+      }
+      return;
+    }
+
+    if (vacio) vacio.classList.add('hidden');
 
     const porMarca = {};
     carritos.forEach(c => {
@@ -156,7 +202,7 @@ const App = {
       <div data-carrito-id="${carrito.id}" class="group bg-hw-card border border-hw-border rounded-2xl overflow-hidden hover:border-hw-yellow transition cursor-pointer">
         <div class="relative aspect-square bg-hw-dark overflow-hidden">
           <img src="${Utils.escapeHTML(fotoPrincipal)}" alt="${Utils.escapeHTML(carrito.nombre)}"
-               class="w-full h-full object-contain group-hover:scale-105 transition duration-300" loading="lazy" />
+               class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy" />
           ${carrito.fotos.length > 1 ? `
             <div class="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
               📸 ${carrito.fotos.length}
@@ -171,18 +217,26 @@ const App = {
     `;
   },
 
+  // ==================== MODAL CARRITO CON CARRUSEL ====================
   abrirModalCarrito(id) {
     const carrito = this.galeria.carritos.find(c => c.id === id);
     if (!carrito) return;
 
+    const totalFotos = carrito.fotos.length;
+    let indiceActual = 0;
+    let autoplayActivo = true;
+    let autoplayTimer = null;
+    let pressTimer = null;
+    let isPressing = false;
+
     const overlay = document.createElement('div');
     overlay.className = 'fixed inset-0 z-[70] bg-black/95 flex items-center justify-center p-4 animate-fade-in';
     overlay.innerHTML = `
-      <div class="max-w-3xl w-full max-h-full overflow-y-auto" onclick="event.stopPropagation()">
+      <div class="max-w-3xl w-full max-h-full overflow-hidden" onclick="event.stopPropagation()">
         <div class="bg-hw-card border border-hw-border rounded-3xl overflow-hidden">
           <div class="p-4 sm:p-6">
             <div class="flex items-start justify-between gap-3 mb-4">
-              <div>
+              <div class="min-w-0 flex-1">
                 <span class="inline-block bg-hw-yellow text-hw-dark font-bold text-xs px-3 py-1 rounded-full mb-2">${Utils.escapeHTML(carrito.marca)}</span>
                 <h3 class="font-display text-2xl sm:text-3xl text-white tracking-wide">${Utils.escapeHTML(carrito.nombre)}</h3>
                 ${carrito.descripcion ? `<p class="text-sm text-gray-400 mt-1">${Utils.escapeHTML(carrito.descripcion)}</p>` : ''}
@@ -190,41 +244,198 @@ const App = {
               <button class="text-gray-400 hover:text-hw-red text-3xl leading-none cerrar">&times;</button>
             </div>
 
-            ${carrito.fotos.length > 1 ? `
-              <div class="flex gap-2 mb-3 overflow-x-auto pb-2">
+            <div class="relative bg-hw-dark rounded-2xl overflow-hidden" style="aspect-ratio: 1 / 1; max-height: 65vh;">
+              <div id="carrusel-track" class="flex h-full transition-transform duration-500 ease-out"></div>
+
+              ${totalFotos > 1 ? `
+                <button class="carrusel-prev absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-hw-yellow hover:text-hw-dark text-white flex items-center justify-center transition z-10 text-2xl leading-none">‹</button>
+                <button class="carrusel-next absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-hw-yellow hover:text-hw-dark text-white flex items-center justify-center transition z-10 text-2xl leading-none">›</button>
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 carrusel-dots"></div>
+                <div class="absolute top-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full z-10 carrusel-contador">1 / ${totalFotos}</div>
+                <div class="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full z-10 carrusel-pausa hidden">⏸ Pausado</div>
+              ` : ''}
+            </div>
+
+            ${totalFotos > 1 ? `
+              <div class="flex gap-2 mt-3 overflow-x-auto pb-2">
                 ${carrito.fotos.map((f, i) => `
                   <button data-foto-index="${i}" class="foto-thumb flex-shrink-0 w-16 h-16 rounded-lg border-2 ${i === 0 ? 'border-hw-yellow' : 'border-hw-border'} overflow-hidden bg-hw-dark">
-                    <img src="${Utils.escapeHTML(f)}" class="w-full h-full object-contain" />
+                    <img src="${Utils.escapeHTML(f)}" class="w-full h-full object-cover" />
                   </button>
                 `).join('')}
               </div>
+              <p class="text-xs text-gray-500 text-center mt-2">💡 Mantén presionada para pausar · Desliza para cambiar</p>
             ` : ''}
-
-            <div class="bg-hw-dark rounded-2xl aspect-square flex items-center justify-center overflow-hidden">
-              <img id="foto-principal" src="${Utils.escapeHTML(carrito.fotos[0])}" class="max-w-full max-h-full object-contain" />
-            </div>
           </div>
         </div>
       </div>
     `;
 
-    overlay.addEventListener('click', () => overlay.remove());
+    document.body.appendChild(overlay);
 
-    const btnCerrar = overlay.querySelector('.cerrar');
-    if (btnCerrar) btnCerrar.addEventListener('click', () => overlay.remove());
+    const track = overlay.querySelector('#carrusel-track');
+    const dotsContainer = overlay.querySelector('.carrusel-dots');
+    const contador = overlay.querySelector('.carrusel-contador');
+    const pausaIndicador = overlay.querySelector('.carrusel-pausa');
 
-    const imgPrincipal = overlay.querySelector('#foto-principal');
+    track.innerHTML = carrito.fotos.map(f => `
+      <div class="w-full h-full flex-shrink-0">
+        <img src="${Utils.escapeHTML(f)}" class="w-full h-full object-cover" draggable="false" />
+      </div>
+    `).join('');
+
+    if (dotsContainer) {
+      dotsContainer.innerHTML = carrito.fotos.map((_, i) => `
+        <button data-dot="${i}" class="carrusel-dot h-2 rounded-full transition ${i === 0 ? 'bg-hw-yellow w-6' : 'bg-white/40 w-2'}"></button>
+      `).join('');
+    }
+
+    const actualizarCarrusel = (nuevoIndice) => {
+      indiceActual = (nuevoIndice + totalFotos) % totalFotos;
+      track.style.transform = `translateX(-${indiceActual * 100}%)`;
+
+      overlay.querySelectorAll('.foto-thumb').forEach((t, i) => {
+        t.className = `foto-thumb flex-shrink-0 w-16 h-16 rounded-lg border-2 ${i === indiceActual ? 'border-hw-yellow' : 'border-hw-border'} overflow-hidden bg-hw-dark`;
+      });
+
+      if (dotsContainer) {
+        dotsContainer.querySelectorAll('.carrusel-dot').forEach((d, i) => {
+          d.className = `carrusel-dot h-2 rounded-full transition ${i === indiceActual ? 'bg-hw-yellow w-6' : 'bg-white/40 w-2'}`;
+        });
+      }
+
+      if (contador) contador.textContent = `${indiceActual + 1} / ${totalFotos}`;
+    };
+
+    const iniciarAutoplay = () => {
+      if (totalFotos <= 1) return;
+      detenerAutoplay();
+      autoplayTimer = setInterval(() => {
+        if (autoplayActivo && !isPressing) {
+          actualizarCarrusel(indiceActual + 1);
+        }
+      }, 3000);
+    };
+
+    const detenerAutoplay = () => {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+    };
+
+    const mostrarPausa = (visible) => {
+      if (!pausaIndicador) return;
+      if (visible) pausaIndicador.classList.remove('hidden');
+      else pausaIndicador.classList.add('hidden');
+    };
+
+    overlay.querySelector('.carrusel-prev')?.addEventListener('click', () => {
+      actualizarCarrusel(indiceActual - 1);
+      iniciarAutoplay();
+    });
+    overlay.querySelector('.carrusel-next')?.addEventListener('click', () => {
+      actualizarCarrusel(indiceActual + 1);
+      iniciarAutoplay();
+    });
+
     overlay.querySelectorAll('.foto-thumb').forEach(thumb => {
       thumb.addEventListener('click', () => {
-        const idx = Number(thumb.dataset.fotoIndex);
-        imgPrincipal.src = carrito.fotos[idx];
-        overlay.querySelectorAll('.foto-thumb').forEach(t => {
-          t.className = `foto-thumb flex-shrink-0 w-16 h-16 rounded-lg border-2 ${t === thumb ? 'border-hw-yellow' : 'border-hw-border'} overflow-hidden bg-hw-dark`;
-        });
+        actualizarCarrusel(Number(thumb.dataset.fotoIndex));
+        iniciarAutoplay();
       });
     });
 
-    document.body.appendChild(overlay);
+    if (dotsContainer) {
+      dotsContainer.querySelectorAll('.carrusel-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+          actualizarCarrusel(Number(dot.dataset.dot));
+          iniciarAutoplay();
+        });
+      });
+    }
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchDeltaX = 0;
+
+    const carruselEl = track.parentElement;
+
+    carruselEl.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchDeltaX = 0;
+      isPressing = true;
+
+      pressTimer = setTimeout(() => {
+        autoplayActivo = false;
+        mostrarPausa(true);
+      }, 400);
+    }, { passive: true });
+
+    carruselEl.addEventListener('touchmove', (e) => {
+      touchDeltaX = e.touches[0].clientX - touchStartX;
+      const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
+
+      if (Math.abs(touchDeltaX) > 10 || deltaY > 10) {
+        clearTimeout(pressTimer);
+      }
+    }, { passive: true });
+
+    carruselEl.addEventListener('touchend', () => {
+      clearTimeout(pressTimer);
+      isPressing = false;
+      mostrarPausa(false);
+
+      setTimeout(() => { autoplayActivo = true; }, 500);
+
+      if (Math.abs(touchDeltaX) > 50) {
+        if (touchDeltaX < 0) actualizarCarrusel(indiceActual + 1);
+        else actualizarCarrusel(indiceActual - 1);
+        iniciarAutoplay();
+      }
+    }, { passive: true });
+
+    carruselEl.addEventListener('mousedown', () => {
+      isPressing = true;
+      pressTimer = setTimeout(() => {
+        autoplayActivo = false;
+        mostrarPausa(true);
+      }, 400);
+    });
+    carruselEl.addEventListener('mouseup', () => {
+      clearTimeout(pressTimer);
+      isPressing = false;
+      mostrarPausa(false);
+      setTimeout(() => { autoplayActivo = true; }, 500);
+    });
+    carruselEl.addEventListener('mouseleave', () => {
+      clearTimeout(pressTimer);
+      isPressing = false;
+      mostrarPausa(false);
+      autoplayActivo = true;
+    });
+
+    carruselEl.addEventListener('mouseenter', () => { autoplayActivo = false; });
+    carruselEl.addEventListener('mouseleave', () => { autoplayActivo = true; });
+
+    const cerrar = () => {
+      detenerAutoplay();
+      overlay.remove();
+      document.removeEventListener('keydown', keyHandler);
+    };
+
+    const keyHandler = (e) => {
+      if (e.key === 'Escape') cerrar();
+      if (e.key === 'ArrowLeft') { actualizarCarrusel(indiceActual - 1); iniciarAutoplay(); }
+      if (e.key === 'ArrowRight') { actualizarCarrusel(indiceActual + 1); iniciarAutoplay(); }
+    };
+
+    overlay.addEventListener('click', cerrar);
+    overlay.querySelector('.cerrar').addEventListener('click', cerrar);
+    document.addEventListener('keydown', keyHandler);
+
+    iniciarAutoplay();
   },
 
   // ==================== NÚMEROS ====================
@@ -296,33 +507,33 @@ const App = {
 
   // ==================== DATOS BANCARIOS ====================
   renderizarDatosBancarios() {
-  if (!this.el.datosBancarios) return;
-  this.el.datosBancarios.innerHTML = CONFIG.cuentasBancarias.map(c => `
-    <div class="bg-hw-dark border border-hw-border rounded-xl p-4">
-      <div class="flex items-center justify-between mb-2">
-        <span class="font-bold text-hw-yellow text-sm">${Utils.escapeHTML(c.banco)}</span>
-        <span class="text-xs ${c.colorBadge} text-white px-2 py-0.5 rounded-full">${Utils.escapeHTML(c.etiquetaCorta)}</span>
+    if (!this.el.datosBancarios) return;
+    this.el.datosBancarios.innerHTML = CONFIG.cuentasBancarias.map(c => `
+      <div class="bg-hw-dark border border-hw-border rounded-xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-hw-yellow text-sm">${Utils.escapeHTML(c.banco)}</span>
+          <span class="text-xs ${c.colorBadge} text-white px-2 py-0.5 rounded-full">${Utils.escapeHTML(c.etiquetaCorta)}</span>
+        </div>
+        <p class="text-xs text-gray-300">Titular: <span class="text-white">${Utils.escapeHTML(c.titular)}</span></p>
+        ${c.cedula ? `<p class="text-xs text-gray-300">Cédula: <span class="text-white font-mono">${Utils.escapeHTML(c.cedula)}</span></p>` : ''}
+        <p class="text-xs text-gray-300">${Utils.escapeHTML(c.tipo)}: <span class="text-white font-mono">${Utils.escapeHTML(c.numero)}</span></p>
+        <button type="button" data-copy="${Utils.escapeHTML(c.numeroCopiar)}" class="copiar-btn mt-2 text-xs bg-hw-yellow text-hw-dark font-bold px-3 py-1 rounded-full hover:bg-yellow-400 transition">
+          📋 Copiar cuenta
+        </button>
       </div>
-      <p class="text-xs text-gray-300">Titular: <span class="text-white">${Utils.escapeHTML(c.titular)}</span></p>
-      ${c.cedula ? `<p class="text-xs text-gray-300">Cédula: <span class="text-white font-mono">${Utils.escapeHTML(c.cedula)}</span></p>` : ''}
-      <p class="text-xs text-gray-300">${Utils.escapeHTML(c.tipo)}: <span class="text-white font-mono">${Utils.escapeHTML(c.numero)}</span></p>
-      <button type="button" data-copy="${Utils.escapeHTML(c.numeroCopiar)}" class="copiar-btn mt-2 text-xs bg-hw-yellow text-hw-dark font-bold px-3 py-1 rounded-full hover:bg-yellow-400 transition">
-        📋 Copiar cuenta
-      </button>
-    </div>
-  `).join('');
+    `).join('');
 
-  this.el.datosBancarios.querySelectorAll('.copiar-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const ok = await Utils.copiarAlPortapapeles(btn.dataset.copy);
-      if (ok) {
-        const orig = btn.textContent;
-        btn.textContent = '✅ ¡Copiado!';
-        setTimeout(() => btn.textContent = orig, 2000);
-      }
+    this.el.datosBancarios.querySelectorAll('.copiar-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const ok = await Utils.copiarAlPortapapeles(btn.dataset.copy);
+        if (ok) {
+          const orig = btn.textContent;
+          btn.textContent = '✅ ¡Copiado!';
+          setTimeout(() => btn.textContent = orig, 2000);
+        }
+      });
     });
-  });
-},
+  },
 
   // ==================== EVENTOS ====================
   attachEventos() {
